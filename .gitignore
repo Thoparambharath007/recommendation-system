@@ -1,0 +1,41 @@
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ── Virtual environments ──
+venv/
+.venv/
+env/
+
+# ── Large data files (too big for GitHub, shared separately) ──
+data/processed/
+data/raw/
+kaggle/output/
+kaggle/input/
+kaggle/upload/
+kaggle/sentiment model kaggle/
+
+# ── Results / caches ──
+results/eval_cache.json
+
+# ── IDE / editor ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──
+*.log
+scripts/*.txt
