@@ -2,7 +2,116 @@
 
 **Based on:** Roy, Kumar & Kumar — "Metadata and Review-Based Hybrid Apparel Recommendation System Using Cascaded Large Language Models" (IEEE Access, Vol. 12, 2024)
 
-**Working folder:** `scratch/` (all project files live here)
+**Working folder:** `C:\Users\thopa\OneDrive\Desktop\project\REAL SYSTEM` (was `scratch/` — moved)
+
+---
+
+## 📍 CURRENT STATE — read this first (updated 2026-09-15)
+
+Everything below is built and **verified working** as of today. This section is the
+complete resume document — no other context is needed. The rest of this file is
+history (session logs).
+
+### What the system is now
+- 371,902 men's shirts/tops from the 2023 UCSD Amazon dataset (`data/processed/`)
+- **7-phase hybrid pipeline**: TF-IDF content + cascaded T5+RoBERTa embeddings
+  (1536-dim, 2.28 GB index) + Flair review sentiment + co-purchase collab signal
+  + quality re-rank (Bayesian rating shrinkage) + MMR diversity
+- **Rufus layer** (`src/rufus.py`): distance-1 typo correction ("blak shrit" →
+  "black shirt"), gibberish → top-rated fallback (page never blanks or 500s),
+  autocomplete, facets, INR conversion (83 INR/USD)
+- **Never-break preference filters** (`src/phase7_fusion.py`): color
+  (brand-strip + color-name collisions + brand-color-prefix demotion), garment
+  type (Amazon category class is authoritative; polo/henley/tee/shirt fully
+  separated — 6-query gauntlet 12/12 each), novelty, gender, occasion,
+  plain-shirt spec words, secondary-color boost
+- **Clickable filters**: brand (searchable across ALL 35,004 brands via
+  `/api/brands`), size (XS…4XL + Big & Tall), 5 INR price buckets, 6 garment
+  types, "4★ & up" rating — all with relax-and-flag instead of empty results
+- **UI** (`web/index.html` + `style.css` + `app.js`, no build step, no deps):
+  suggestion dropdown (keyboard nav), typo-fix banner, removable active-filter
+  chips, sort (best/price/rating), recent + popular searches (localStorage),
+  skeleton loading, warm-up progress strip, error + Retry, rating counts,
+  people-also-bought, weight sliders (persisted)
+
+### Run it
+```bash
+cd "C:/Users/thopa/OneDrive/Desktop/project/REAL SYSTEM"
+# Server (background). HF_HUB_OFFLINE=1 is REQUIRED (models cached locally):
+HF_HUB_OFFLINE=1 C:/python/python.exe -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000
+# -> http://127.0.0.1:8000  ·  /health = {"ready":true} when the engine is up
+# Warm-up: ~60 s cold disk, ~10-30 s warm OS cache (loads in a background
+# thread, so the server binds instantly; /api/suggest works even while warming).
+```
+```bash
+# Tests (STOP THE SERVER FIRST — see gotcha #1):
+C:/python/python.exe -m unittest discover -s tests -p "test_*.py"
+# Current state: 202/202 PASS in ~11 s
+```
+
+### Gotchas (all hit in real life)
+1. **RAM (16 GB): full test suite and the server CANNOT run together** —
+   ArrowMemoryError. Stop the server first: `taskkill //F //IM python.exe`
+2. **Background task notifications lie** (uvicorn "completed" while the python
+   process is still alive; TaskStop can report success on dead tasks). Always
+   verify: `curl -s --max-time 3 http://127.0.0.1:8000/health` (exit 7 = port
+   free) and `tasklist | grep -i python`
+3. **HF_HUB_OFFLINE=1** on server start (transformers 6.x TF-import quirk
+   otherwise)
+4. Python is `C:/python/python.exe` (3.13); Windows 11 Git Bash — taskkill
+   flags need `//`
+5. **Garment class must be built from the RAW pipe-joined `categories`**
+   BEFORE `preprocess_metadata` strips the separators (Engine.__init__ does
+   this first) — this is what keeps merch tees out of "black shirt"
+6. **FastAPI static mount must be registered LAST** (Starlette matches in
+   registration order — a mount before a route shadows that route)
+7. Git Bash `/tmp` and Windows-python `/tmp` resolve to different places —
+   use full Windows paths inside python snippets
+
+### Verified today (2026-09-15)
+- **202/202 unit tests** (tests/test_phase7.py: 158, tests/test_rufus.py: 44)
+- **6-query type gauntlet ALL PASS**: black polo / black polo shirt /
+  black henley / white shirt / black shirt / blue tshirt → 12/12 per query,
+  zero cross-type leaks (word-bounded leak regexes + full-title inspection)
+- Rufus live: "blak shrit" → "black shirt" + fix banner · "asdfghjkl" →
+  fallback banner + 12 top-rated picks · "under armour" → 12/12 Under Armour
+  (multi-word brand intent) · black+Hanes+L+₹415–₹1,245 → 3/3 in budget ·
+  4★ & up → 12/12 items ≥ 4.0★ · /api/brands "essentials" → amazon essentials
+- All web assets serve 200, API routes intact, unknown path → 404
+
+### File map (live system)
+| File | Role |
+|---|---|
+| `src/web_app.py` | FastAPI app + Engine (loads everything); `/api/recommend`, `/api/suggest`, `/api/facets`, `/api/brands`, `/api/collab/{asin}`, `/health`; static mount LAST |
+| `src/rufus.py` | Pure functions: correct_query, has_apparel_intent, suggest, build_facets, filter_by_brand/size/rating, search_brands, INR |
+| `src/phase7_fusion.py` | Fusion + all preference filters + parse_price_range + MMR + quality re-rank |
+| `src/preprocessing.py` | clean_text, extract_size, classify_garment, COLOR_WORDS |
+| `src/content_filter.py`, `src/phase5_similarity.py` | TF-IDF filter; EmbeddingIndex + QueryEmbedder |
+| `web/index.html` / `style.css` / `app.js` | UI (63 / 125 / 462 lines) |
+| `tests/test_phase7.py`, `tests/test_rufus.py` | the 202 tests |
+| `data/processed/*.parquet` | men_shirts_metadata, product_details, product_sentiment, copurchase_edges, product_texts |
+
+### API quick reference
+- `POST /api/recommend` — body: `{query, top_k, w_content, w_embed, w_sentiment, w_collab, brand?, size?, min_rating? (0-5), min_price_inr?, max_price_inr?}` → `{query, corrected_query, corrections[], note{fallback,brand_relaxed,size_relaxed,rating_relaxed}, price{min,max,relaxed,min_inr,max_inr}, items[{parent_asin,title,brand,rating,n_ratings,price,price_inr,image_url,scores...,in_budget,in_brand,in_size,in_rating}]}`
+- `GET /api/suggest?q=` — works BEFORE engine ready · `GET /api/facets` —
+  blocks until ready (UI retries) · `GET /api/brands?q=` — prefix + contains
+  · `GET /api/collab/{asin}` · `GET /health`
+
+### Not done yet (candidate next steps, priority order)
+1. Post-filter facet counts (Amazon-style recomputed counts) — needs filtering
+   the full df per click; RAM risk on 16 GB, deliberately deferred
+2. Product detail page / Amazon deep link on main cards (PAB links exist)
+3. Dark theme toggle (palette is dark in the header already)
+4. PPT: user preparing slides — one-liners delivered 12 Aug
+5. Catalog beyond men's shirts → needs Kaggle re-embedding (~6 h)
+
+### Dataset facts (for tuning decisions)
+- 35,004 real brands (top: goodthreads 4,269 · amazon essentials 4,061 ·
+  under armour 3,816 · hanes · adidas · coofandy · nike)
+- Prices: 30% priced, median $19.99 = ₹1,659, 68% of priced in ₹1,245–₹2,490
+- Sizes: 31% of titles carry one (L 31k, Big & Tall 13.6k, S 13.5k, M 9.9k, XL 9.6k)
+- Garment mix: novelty 43.1% · shirt 17.9% · tee 15.0% · hoodie 6.1% ·
+  polo 5.2% · henley 2.1% · rest tank/underwear/swim/costume/unknown
 
 ---
 
@@ -295,10 +404,12 @@ Start-Process powershell -ArgumentList "-NoProfile","-Command",$cmd -WorkingDire
 ---
 
 ## Run Commands
+(Superseded — the current commands live in the CURRENT STATE section at the top.)
 ```powershell
-cd C:\Users\thopa\OneDrive\Desktop\project\scratch
-python src\main.py --brand nike --category shirts --size large --color blue --top-k 10
-python -m unittest discover -s tests -v
+cd C:\Users\thopa\OneDrive\Desktop\project\REAL SYSTEM
+$cmd = "`$env:HF_HUB_OFFLINE='1'; C:/python/python.exe -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000"
+Start-Process powershell -ArgumentList "-NoProfile","-Command",$cmd -WorkingDirectory "C:\Users\thopa\OneDrive\Desktop\project\REAL SYSTEM"
+C:/python/python.exe -m unittest discover -s tests -p "test_*.py"   # stop the server first!
 ```
 
 ---
@@ -311,9 +422,10 @@ python -m unittest discover -s tests -v
 - Dataset site: https://amazon-reviews-2023.github.io/ (0-core page: benchmark/0core/rating_only/)
 
 ## Resuming (tomorrow)
-1. Session continues automatically via this opencode session; if closed, use `/sessions` (session under "global" project since Desktop\project is not a git repo) or `opencode -c`.
-2. Read this PROGRESS.md — it's the full text backup.
-3. **All 7 phases + website COMPLETE (69/69 tests).** To restart the demo: use the HF_HUB_OFFLINE wrapper command in the Website section → http://127.0.0.1:8000. Optional next steps: tune fusion weights, Flair vs star-rating eval, Amazon links on cards, "people also bought" (Phase 2 edges), dark theme, expand catalog beyond men's shirts (~6h Kaggle re-embed). PPT: user preparing slides — intro/requirement/design/development/status/lessons/deployment one-liners delivered (12 Aug).
+1. Read the **CURRENT STATE — read this first** section at the top — it is the
+   full resume document (what exists, how to run, gotchas, what's verified,
+   what's left). Everything below this line is history.
+2. All 7 phases + Rufus web app COMPLETE — 202/202 tests as of 2026-09-15.
 
 ## Today's session log (9 Aug 2026)
 - Downloaded + verified 0-core CSV (1.29GB, 65.18M rows) — user's download manager to C:\AmazonData (OneDrive broke 2 earlier attempts), moved to documents
@@ -370,3 +482,236 @@ python -m unittest discover -s tests -v
 - apply_type_preference: plain "shirt" queries now exclude polos/henleys (POLO_MARKERS); explicit "polo shirt" queries keep them.
 - NOVELTY_WORDS += band/biker merch brands (fender, gibson, telecaster, rockabilly, harley, guitar, ...).
 - Verified: 48/48 unittest OK; scripts/sanity_fix_check.py all pass.
+
+## Session 2026-09-15 - Category-based garment classification (black-shirt fix)
+
+### The bug
+Live reproduction showed merch T-shirts (X-Men, Def Leppard, Bad Bunny, "V shirt"
+leaks) flooding "black shirt" results, and the natural-language query
+"i want black shirt with white buttons under 2000" returning 1 item (the price
+filter emptied the funnel: 70% of the catalog has no scraped price and most
+priced black shirts are > $24).
+
+### Root cause + fix
+Keyword blocklists (TEE_MARKERS / NOVELTY_WORDS) can't be exhaustive — merch
+sellers stuff "Black Shirt" into tee titles for Amazon SEO. The Amazon category
+PATH is a structural signal that can't be gamed that way:
+- **src/preprocessing.py**: new classify_garment() — asin category path ->
+  novelty/costume/underwear/swim/hoodie/tank/tee/polo/henley/shirt/unknown.
+  Exact-segment "novelty" match ("Novelty & More" is a department, not a flag).
+- **src/phase7_fusion.py**:
+  - build_garment_class_map() from the RAW (pipe-joined) categories, built
+    before preprocess_metadata strips the separators.
+  - apply_type_preference(garment_class=): category class is authoritative —
+    'shirt' class = real shirt (bare titles now kept); novelty/tee/tank/polo/
+    hoodie classes can never answer a shirt query; title tee-marker kept as a
+    safety net for misfiles; title veto for jacket/polo titles even in the
+    shirt class (Metal Mulisha flannel jacket, Oakley polo leaks fixed).
+  - apply_novelty_filter(garment_class=, query=): class-based novelty ban;
+    bypassed when the query itself wants merch ("funny gift shirt").
+  - apply_gender_filter(): drops ~3K women's-titled leaks.
+  - apply_secondary_color_boost(): "black shirt with white buttons" — items
+    with the accent color in the title get +0.10 fused and re-sort.
+  - apply_plain_shirt_preference(garment_class=): spec-word requirement waived
+    for confirmed-shirt-class products (bare-titled real shirts now match).
+  - TEE_MARKERS += "v shirt" (Sueded V shirt leak).
+  - parse_price_range: "size 17-18"/"neck 15-16" no longer parsed as prices;
+    "not more than"/"not less than"/"up to" supported; sub-dollar range guard.
+- **src/web_app.py**: Engine loads the class map; recommend() wires all filters
+  and returns (result, price_info). Price intent now RELAXES instead of
+  emptying the page when <3 items are priced in budget — the full pool is kept
+  and every item is flagged in_budget; response adds "price" + per-item
+  "in_budget".
+- **web/index.html**: status line shows the parsed budget (+"relaxed" note);
+  each card shows a green "in budget" / grey "over budget" tag when relaxed.
+- **tests/test_phase7.py**: +36 tests (classifier, class-aware type/novelty/
+  plain-shirt, gender, secondary color, price guards, misfiled jacket/polo,
+  polo/henley family separation, USPA brand-strip) -> **156/156 PASS**.
+- Root junk: deleted 14 zero-byte shell-artifact files from the repo root.
+
+### Verified live (port 8000)
+- "black shirt" -> 12/12 genuine black dress/casual shirts, 0 tees/merch/polo/jackets.
+- "i want black shirt with white buttons under 2000" -> full page (budget
+  relaxed + in-budget flags) instead of 1 item.
+- "black tshirt" -> 12/12 real black tees; "black polo shirt" / "black polo"
+  -> polos only (USPA hoodie + USPA T-Shirt brand-name leaks fixed by
+  brand-stripping before the polo check; tee-title veto exempts henley
+  titles so "black henley" still returns henley T-shirts).
+
+### Polo/henley family + USPA brand-strip (same session, later)
+Boundary gauntlet ("does the type separation ever break?") exposed two more
+gaps, both fixed in `apply_type_preference`:
+- **Henley gap**: "black henley" had NO type family (detect_garment_type
+  returned '' — no 'shirt' word, no tee marker), so crew tees flooded.
+  Added the "polo" kind (matches polo AND henley queries): polo-cls items
+  need no title proof, henley-cls items need the henley word on bare
+  'henley' queries, everything else must say polo/henley in the title;
+  tanks/novelty/costume/hoodie never qualify.
+- **USPA brand-name leak**: "black polo" returned a USPA *hoodie* and a USPA
+  *T-Shirt* — the brand "U.S. Polo Assn." triggered the polo check. Fix:
+  strip the brand (punctuation-normalized both sides) before the polo
+  title check, veto any tee title (except henley titles), and veto
+  heavy-garment titles (hoodie/sweatshirt/jacket/puffer).
+- Callers: web_app.py recommend() and the CLI both pass brands= now.
+- +2 regression tests (USPA brand-strip; unknown-class polo not answered
+  by a henley query and vice versa).
+
+### Boundary gauntlet, round 2 (same session)
+- **Helly Hansen polo in 'black henley'**: filed under 'Active Shirts &
+  Tees' (class unknown) and the misfiled branch matched 'polo' via
+  POLO_MARKERS (which mixes polo+henley). Split the words: a bare 'polo'
+  query only accepts a 'polo' title word (or polo-category class), a bare
+  'henley' query only 'henley'; a polo/henley-category item is authoritative
+  only for its own word's query.
+- **'Newport Blue' brand-color prefix in 'blue tshirt'**: Amazon records
+  the brand as 'Generic', so 'Newport Blue' is just a title prefix and the
+  REAL color is the trailing word ('..., Yellow' / ', White' / ',Teal').
+  apply_color_preference now demotes the query color when it sits in a
+  2-token '<word> <color> <men's/women's/unisex>' title prefix AND a
+  different color word appears elsewhere in the title ('Ocean Blue' with
+  no other color is still a legit shade and matches). Comma counts as a
+  token boundary (Amazon glues variant colors: 'Cars,Teal').
+- 6-query gauntlet (black polo / black polo shirt / black henley / white
+  shirt / black shirt / blue tshirt): **ALL PASS**, 12/12 per query, and
+  'blue tshirt' passes a trailing-color truth check (all 12 genuinely
+  blue). **158 tests, all PASS**.
+
+## Session 2026-09-15 (cont.) - Rufus upgrade (never-break search + filters + INR UI)
+
+### Dataset profile (drove every choice below)
+- 371,902 items; garment mix: novelty 43.1%, shirt 17.9%, tee 15.0%, hoodie
+  6.1%, polo 5.2%, henley 2.1%, tank/underwear/swim the rest.
+- 35,004 real brands (top-40 facet built from these; junk strings like
+  'Generic'/'N/A' filtered): goodthreads 4,269 · amazon essentials 4,061 ·
+  under armour 3,816 · hanes · adidas · coofandy · nike ...
+- Prices: only 30% of items have a scraped price; median $19.99 = ₹1,659;
+  68% of priced items sit in ₹1,245–2,490; max ₹91,299. INR at 83 INR/USD
+  (same rate parse_price_range already uses).
+- Sizes: only 31% of titles carry a size word (L 31k, Big & Tall 13.6k,
+  S 13.5k, M 9.9k, XL 9.6k) — so size is a RELAXING filter, not a hard one.
+
+### New: src/rufus.py (pure functions, no models — unit-testable)
+- correct_query(): OSA (Damerau-Levenshtein) distance-1-only typo correction
+  against a ~250-word catalog vocabulary with frequency tie-breaks. Words
+  already in the vocab, numbers, apostrophe words ('men's') and anything with
+  no distance-1 candidate pass through UNTOUCHED — a weird query can never be
+  mangled into the wrong garment. 'blak shrit' -> 'black shirt',
+  'whtie' -> 'white' (transposition), 'nike' survives (not distance-1 from
+  any vocab word).
+- has_apparel_intent(): the never-break gate — no garment/color/style/brand
+  token in the query -> top-rated catalog fallback instead of nonsense.
+  Brands match per-token AND as contiguous token runs (multi-word brands
+  like 'under armour' / 'the north face' count as intent — this was a real
+  bug found in live verification: per-token only made 'under armour'
+  fall through to the fallback).
+- suggest(): autocomplete tiers — curated phrases > vocab words > brands.
+- build_facets(): top-40 brands, 6 garment types (with the query word each
+  UI chip appends), 9 sizes, 5 INR price buckets (contiguous: 0-415,
+  415-1245, 1245-2490, 2490-4980, 4980+).
+- filter_by_brand / filter_by_size: pure post-fusion masks (lowercase
+  equality).
+
+### web_app.py wiring
+- /api/recommend accepts brand, size, min_price_inr, max_price_inr; applies
+  correct_query first (response carries corrected_query + corrections[] so
+  the UI can show a 'Fixed a typo' banner and search exactly that); size
+  validated against SIZE_OPTIONS (422); recommend() returns (result,
+  price_info, note) where note = {fallback} / {brand_relaxed} /
+  {size_relaxed}. Brand cut keeps the pool when >=1 match else relaxes+flags
+  (in_brand); size cut needs >=4 else relaxes+flags (in_size). Items carry
+  price_inr. Engine exceptions -> friendly 500, never a stack dump.
+- New endpoints: GET /api/suggest?q= (works BEFORE the engine warms up) and
+  GET /api/facets (blocks until warm — UI retries).
+
+### web/index.html rewrite (Rufus-style)
+- Live suggestion dropdown: 200 ms debounce, ArrowUp/Down/Enter/Esc,
+  click-to-fill-and-search, bolded match prefix, closes on outside click.
+- '✍️ Fixed a typo: blak → black · shrit → shirt' banner; the input box
+  updates to the corrected query so the user sees exactly what was searched.
+- Clickable filter bar: garment-type chips (Shirts/T-Shirts/Polos/Henleys/
+  Hoodies/Tanks — the chip strips any existing garment word from the typed
+  query and appends its own, so 'black polo' + [T-Shirts] searches
+  'black tshirt'), brand dropdown (top 40, 'Any brand' default), size
+  buttons, INR price-bucket buttons, 'clear all filters'. Filters persist
+  across searches; typing fresh text resets only the type chip.
+- INR everywhere: ₹1,245-style formatting via price_inr; 'price not listed'
+  for the ~70% without a scraped price; budget banner shows the INR range.
+- Banners for fallback / brand_relaxed / size_relaxed; 'different brand' /
+  'size not listed' tags on relaxed-filter cards; searchSeq discards stale
+  responses; esc() XSS escaping kept for all untrusted titles/brands;
+  people-also-bought strip kept; weight sliders folded into 'Advanced'.
+- Footer: 371,902 products · 35,000+ brands · 83 INR/USD.
+
+### Tests
+- New tests/test_rufus.py: 36 tests (correction incl. transposition /
+  gibberish-untouched / apostrophe / brand-not-mangled / tie-break; intent
+  gate incl. multi-word brands; suggest tiers/limit/never-raises; INR
+  roundtrip; facets junk-filter/type-cap/contiguous buckets/chip-word
+  validity; brand/size filters).
+- Full suite: **194/194 PASS**.
+
+### Verified live (port 8000, after the fallback fix)
+- 'blak shrit' -> corrected 'black shirt', both fixes reported, 12 items.
+- 'asdfghjkl' -> fallback banner + 12 top-rated picks (page never blanks).
+- 'under armour' -> 12/12 Under Armour items, no fallback.
+- 'black' + Hanes + L + ₹415–₹1,245 -> 3 items, 3/3 in budget, all priced.
+- 'aravinda' + XS -> brand_relaxed + size_relaxed banners, still 12 items.
+- /api/suggest 'po' -> 'polo shirt' first; 'bl' -> black shirt/tshirt/polo.
+- /api/facets -> usd_inr 83, top brand goodthreads (4,269), 6 types,
+  9 sizes, 5 buckets. Frontend serves (22 KB) and its inline JS passes
+  node --check.
+- Bug found+fixed during live verification: the no-intent fallback crashed
+  with `'Index' object has no attribute 'head'` (pandas Index has no
+  .head()) -> 500 on every gibberish query. Fixed with .tolist()[:n].
+
+## Session 2026-09-15 (cont. 2) - Senior-dev improvement pass
+
+### Backend (src/rufus.py, src/web_app.py)
+- **min_rating "4★ & up" filter**: rufus.filter_by_rating() pure helper —
+  same relax-if-fewer-than-4 pattern as brand/size (unrated items never
+  pass; relaxed keeps the pool + in_rating flags). Engine builds
+  self.ratings dict at load; /api/recommend accepts min_rating (0-5),
+  response items carry in_rating, note may carry rating_relaxed.
+- **/api/brands?q=**: search the FULL ~35k-brand catalog, not just the
+  top-40 dropdown. rufus.search_brands() — prefix first, contains fallback
+  ('essentials' finds 'amazon essentials'), case-insensitive, never raises.
+  Engine builds self.brand_sorted at load.
+- **Static asset mount**: web/ now split into style.css + app.js, served
+  via `app.mount("/", StaticFiles(directory=WEB_DIR, html=True))` placed
+  AFTER every route — Starlette matches in registration order, so a mount
+  placed early would have shadowed /api/collab. (Caught pre-deploy.)
+- Root cleanup: removed 5 more zero-byte shell-artifact files (100, 500,
+  pd.DataFrame, str, dropped).
+
+### Frontend (web/index.html 63 lines + web/style.css 125 + web/app.js 462)
+Split the 470-line single file into three (each <500 lines) and added:
+- **Hanger logo** (inline SVG, accent color) in the header + small inline
+  SVG icons on every filter row (Type t-shirt, Brand tag, Size expand,
+  Price ₹, Rating ★) — no external assets, stays offline-friendly.
+- **Searchable brand input**: input+datalist pre-filled with top-40, 300ms
+  debounced /api/brands lookup so any of the 35k brands is findable
+  ('u.s.' -> 'u.s. polo assn.').
+- **Active-filter chip bar** above results: every applied filter as a
+  dark pill with its own ✕ (type/brand/size/price/rating) + clear all —
+  the e-commerce-standard "what am I filtering by" strip.
+- **Sort dropdown**: Best match (server order) / Price: low to high (unpriced
+  last) / Top rated (client-side, no API change).
+- **"4★ & up" rating chip** (sends min_rating=4.0; relaxed items get a
+  'below 4★' tag).
+- **Recent searches** (localStorage, last 5) + **Popular** quick chips shown
+  whenever there are no results; both one-click.
+- **Skeleton loading cards** (CSS shimmer) for warm searches, indeterminate
+  progress strip for the cold first load.
+- **Error state with Retry button** (no more dead-end error text).
+- Rating counts on cards (★4.3 (1.2K)), "/" focuses search, weight sliders
+  persist across reloads (localStorage), typo/recent/baseQuery flows
+  unchanged from the verified Rufus pass.
+
+### Verified
+- Full suite: **202/202 PASS** (10 new tests: filter_by_rating strict/
+  relaxed/unrated, search_brands prefix/contains/empty/case/limit).
+- Live: /api/brands 'essentials' -> 'amazon essentials' (contains fallback),
+  'u.s.' -> 'u.s. polo assn.'; min_rating=4.0 on 'black shirt' -> 12/12
+  items >= 4.0★; combo hanes+L+4★+₹415–₹1,245 -> 3 clean items; all three
+  web assets serve 200; /api/collab still routes (mount not shadowing);
+  unknown path 404s cleanly; 6-query type gauntlet unchanged (ALL PASS).

@@ -21,10 +21,24 @@ CHUNK_SIZE = 100_000
 
 
 def iter_jsonl_gz(path: str) -> Iterable[dict[str, Any]]:
-    with gzip.open(path, "rt", encoding="utf-8") as f:
+    """Stream records from a JSONL.gz file, skipping unparseable lines.
+
+    The 4GB Amazon metadata file can contain a truncated final line or
+    occasional encoding artifacts; a single bad line should not kill the
+    whole rebuild. ``errors="replace"`` turns undecodable bytes into U+FFFD
+    instead of a UnicodeDecodeError.
+    """
+    skipped = 0
+    with gzip.open(path, "rt", encoding="utf-8", errors="replace") as f:
         for line in f:
-            if line.strip():
+            if not line.strip():
+                continue
+            try:
                 yield json.loads(line)
+            except json.JSONDecodeError:
+                skipped += 1
+    if skipped:
+        print(f"  skipped {skipped} unparseable line(s) in {path}")
 
 
 def is_men_shirt(categories: list[str]) -> bool:

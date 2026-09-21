@@ -89,6 +89,9 @@ class EmbeddingIndex:
         asins = df["parent_asin"].astype(str).to_numpy()
         matrix = np.vstack(df["embedding"].to_numpy()).astype(np.float32)
         norms = np.linalg.norm(matrix, axis=1, keepdims=True)
+        # guard: a zero-norm row would divide to NaN and poison every
+        # dot-product search against that product
+        norms[norms == 0] = 1.0
         matrix = matrix / norms
         np.save(index_path, matrix)
         pd.DataFrame({"parent_asin": asins}).to_parquet(asins_path, index=False)

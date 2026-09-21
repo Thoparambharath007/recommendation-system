@@ -14,6 +14,8 @@ venv/
 env/
 
 # ── Large data files (too big for GitHub, shared separately) ──
+# Raw Amazon dataset (~12 GB) — needed only to rebuild data/processed/
+datasets/
 data/processed/
 data/raw/
 kaggle/output/

@@ -50,6 +50,53 @@ def _join(parts: list[str]) -> str:
     return " ".join(p for p in parts if p).strip()
 
 
+def classify_garment(categories: str) -> str:
+    """Classify a product from its RAW Amazon category path (structural signal).
+
+    Returns one of: novelty, costume, underwear, swim, hoodie, tank, tee,
+    polo, henley, shirt, unknown. Title keywords can be gamed (merch sellers
+    stuff 'Black Shirt' into T-shirt titles for SEO), but the category path
+    is assigned by Amazon's taxonomy and cannot be faked that way — a
+    'T-Shirts' node product is a tee, a 'Novelty' node product is merch,
+    regardless of what the title claims.
+
+    'Novelty' must match the EXACT segment: 'Novelty & More' is a department
+    (2nd path segment) under which legit solid shirts are filed, so a
+    substring match would misclassify ~40K real shirts as merch.
+
+    Expects the raw pipe-joined string from data_loader (e.g.
+    "Clothing, Shoes & Jewelry | Men | Tops | T-Shirts"); preprocess_metadata
+    strips the '|' separators, so call this on the raw parquet df.
+    """
+    segs = [s.strip().lower() for s in (categories or "").split("|") if s.strip()]
+    if not segs:
+        return "unknown"
+    if "novelty" in segs:
+        return "novelty"
+    if any("costume" in s or "cosplay" in s for s in segs):
+        return "costume"
+    if any("underwear" in s or "undershirt" in s for s in segs):
+        return "underwear"
+    if any("swim" in s or "rash guard" in s for s in segs):
+        return "swim"
+    if any("hoodie" in s or "sweatshirt" in s or "sweat" in s for s in segs):
+        return "hoodie"
+    if any("tank" in s for s in segs):
+        return "tank"
+    if any("t-shirt" in s or "tshirts" in s or "t shirt" in s for s in segs):
+        return "tee"
+    if any("shirts & tees" in s for s in segs):
+        # mixed category — the title heuristics decide instead
+        return "unknown"
+    if any("polo" in s for s in segs):
+        return "polo"
+    if any("henley" in s for s in segs):
+        return "henley"
+    if any("shirt" in s for s in segs):
+        return "shirt"
+    return "unknown"
+
+
 def preprocess_metadata(df: pd.DataFrame) -> pd.DataFrame:
     needed = ["parent_asin", "brand", "title", "categories", "bought_together"]
     df = df[[c for c in needed if c in df.columns]].copy()
