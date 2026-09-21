@@ -754,3 +754,12 @@ then frees port 8000 and starts uvicorn. setup.bat reduced to optional explicit
 report (bootstrap + check_install). README/SETUP renumbered to 3 steps:
 clone -> drop data folder -> double-click start.bat. Verified live: fast-path
 boot, server ready, navy polo query OK.
+
+### Follow-up - explicit first-run marker (user request)
+start.bat now LITERALLY checks deps only once: bootstrap writes .setup_done
+(python version + date) after a successful first-run setup; every later launch
+prints "already set up - skipping checks" (0.15 s, zero probing) and boots the
+server. setup.bat passes --force for the explicit full report; marker is
+gitignored; switching Python versions invalidates it automatically. Verified:
+run1 full path + marker, run2 skip, live start.bat boot + white linen shirt
+query OK.

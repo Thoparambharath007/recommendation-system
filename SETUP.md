@@ -110,7 +110,10 @@ automatically (via `scripts/bootstrap.py`):
 2. Downloads the two HuggingFace models (~2.5 GB — the only step needing internet)
 3. Warns (without blocking) if the data folder isn't in place yet
 
-Every LATER run these checks cost ~0.2 s and it goes straight to the server.
+On success it writes the `.setup_done` marker; EVERY LATER click on start.bat
+sees the marker and skips all checking entirely (0.15 s) - straight to the
+server. Switching Python versions re-triggers the check automatically; delete
+`.setup_done` (or run setup.bat, which uses --force) to force a full re-check.
 A failed step prints the fix and re-running resumes where it left off.
 
 `setup.bat` is the optional explicit version (same bootstrap + a full ✅/❌

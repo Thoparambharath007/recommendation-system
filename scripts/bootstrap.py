@@ -1,16 +1,16 @@
 """One-shot bootstrap, run automatically by start.bat on every launch.
 
-Idempotent and cheap when nothing needs doing (finishes in <1 s via
-importlib.metadata probes - no heavy imports). Three stages:
-
-  [1] deps    - if any package from requirements.txt is missing, run
-                pip install (first run only)
+FIRST RUN on a machine does the real work:
+  [1] deps    - if any package from requirements.txt is missing, run pip install
   [2] models  - if the two HuggingFace models are not cached, download them
-                via scripts/fetch_models.py (~2.5 GB, first run only,
-                needs internet)
+                via scripts/fetch_models.py (~2.5 GB, needs internet)
   [3] data    - WARN (do not fail) when the shared data/processed folder is
                 absent; the server still starts and shows the same guidance
                 on /health, so this must never block launch.
+On success it writes the .setup_done marker, so EVERY LATER launch of
+start.bat skips all checking (instant) and goes straight to the server.
+The marker records the Python version - switch Pythons and it re-checks.
+`--force` (or deleting .setup_done) re-runs the full check.
 
 Exit codes: 0 = ready, start the server. 1 = setup failed (message printed;
 start.bat then stops and tells the user to re-run).
@@ -20,8 +20,10 @@ import os
 import pathlib
 import subprocess
 import sys
+from datetime import datetime
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+MARKER = ROOT / ".setup_done"
 
 PKGS = (
     "pandas", "numpy", "scikit-learn", "scipy", "pyarrow",
@@ -60,6 +62,32 @@ def models_cached() -> bool:
 def data_missing() -> list[str]:
     folder = ROOT / "data" / "processed"
     return [name for name in DATA_MARKERS if not (folder / name).exists()]
+
+
+def marker_tag() -> str:
+    return f"python-{sys.version_info.major}.{sys.version_info.minor}"
+
+
+def already_set_up(force: bool) -> bool:
+    """True when a previous full check succeeded on the same Python."""
+    if force or not MARKER.exists():
+        return False
+    try:
+        first = MARKER.read_text(encoding="utf-8").splitlines()[0].strip()
+    except (OSError, IndexError):
+        return False
+    return first == marker_tag()
+
+
+def write_marker() -> None:
+    try:
+        MARKER.write_text(
+            marker_tag() + "\n"
+            + f"set up {datetime.now():%Y-%m-%d %H:%M} - delete this file to force a re-check\n",
+            encoding="utf-8",
+        )
+    except OSError:
+        pass  # read-only dir etc: worst case we re-check next launch
 
 
 def ensure_python() -> bool:
@@ -123,12 +151,16 @@ def check_data() -> None:
 def main() -> int:
     if not ensure_python():
         return 1
+    if already_set_up("--force" in sys.argv):
+        print("[setup] already set up on this PC - skipping checks, starting server")
+        return 0
     if not ensure_deps():
         return 1
     if not ensure_models():
         return 1
     check_data()
-    print("[setup] all good - starting server")
+    write_marker()
+    print("[setup] first-time setup complete - next launches go straight to the server")
     return 0
 
 

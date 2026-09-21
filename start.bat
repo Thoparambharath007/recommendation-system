@@ -20,10 +20,10 @@ if errorlevel 1 if not exist "C:\python\python.exe" (
     exit /b 1
 )
 
-:: FIRST RUN = full automatic setup (pip deps + ~2.5 GB model download).
-:: LATER RUNS = the same checks, skipped in under a second.
-:: All logic lives in scripts\bootstrap.py (plain-English errors there).
-echo [1/3] One-time setup check (first run: installs deps + downloads models)...
+:: FIRST RUN on this PC: installs dependencies + downloads the AI models,
+:: then remembers it (.setup_done marker) - EVERY LATER RUN skips all
+:: checking and goes straight to the server. Logic: scripts\bootstrap.py.
+echo [1/3] Setup check (first run installs everything; later runs skip)...
 "%PY%" scripts\bootstrap.py
 if errorlevel 1 (
     echo.

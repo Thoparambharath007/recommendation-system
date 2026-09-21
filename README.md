@@ -101,8 +101,10 @@ The `data/processed/` folder (~2.8 GB) contains pre-computed outputs from all ph
 
 ### 3. Double-click `start.bat` — that's it
 One file, one click. **First run only** it automatically installs the Python
-dependencies and downloads the two AI models (~2.5 GB, needs internet, ~5–15 min);
-every later run skips setup in under a second and just starts the server.
+dependencies and downloads the two AI models (~2.5 GB, needs internet, ~5–15 min),
+then remembers your PC (`.setup_done` marker) — **every later click skips all
+checking entirely and goes straight to the server** (delete the marker, or run
+setup.bat, to force a re-check).
 If a step fails it says exactly what to do — re-running resumes where it left off.
 
 Then open **http://127.0.0.1:8000** and search — e.g. `black shirt`, or try the

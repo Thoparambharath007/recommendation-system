@@ -14,7 +14,9 @@ venv/
 env/
 
 # ── Large data files (too big for GitHub, shared separately) ──
-# Raw Amazon dataset (~12 GB) — needed only to rebuild data/processed/
+# First-run marker written by scripts/bootstrap.py (per-machine state, not code)
+.setup_done
+# Raw Amazon dataset (~12 GB) - needed only to rebuild data/processed/
 datasets/
 data/processed/
 data/raw/

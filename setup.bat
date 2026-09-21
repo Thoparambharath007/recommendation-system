@@ -15,7 +15,9 @@ echo.
 set "PY=C:\python\python.exe"
 if not exist "%PY%" set "PY=python"
 
-%PY% scripts\bootstrap.py
+:: --force: setup.bat is the explicit report, so re-check everything even
+:: if start.bat already completed setup on this PC.
+%PY% scripts\bootstrap.py --force
 if errorlevel 1 (
     echo [ERROR] Setup failed - see the message above.
     pause
