@@ -74,7 +74,7 @@ def check_data() -> None:
         # the shared folder contains them, so still flag their absence
         report(path.exists(), f"data file: {name}",
                "download the shared data/processed folder (~2.8 GB) into the "
-               "project — see README step 3")
+               "project - see README step 3")
 
 
 def main() -> int:
@@ -86,9 +86,9 @@ def main() -> int:
     check_data()
     print("=" * 40)
     if ok_all:
-        print("READY — double-click start.bat, then open http://127.0.0.1:8000")
+        print("READY - double-click start.bat, then open http://127.0.0.1:8000")
         return 0
-    print("NOT READY — fix the FAIL lines above, then re-run this check.")
+    print("NOT READY - fix the FAIL lines above, then re-run this check.")
     return 1
 
 

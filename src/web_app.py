@@ -160,7 +160,7 @@ class Engine:
             raise RuntimeError(
                 "Missing data files in data/processed/: "
                 + ", ".join(missing)
-                + " — that folder is NOT in git; download the shared "
+                + " - that folder is NOT in git; download the shared "
                 "~2.8 GB data/processed folder into the project and restart "
                 "(README 'Setup for Team Members' step 3). "
                 "Run 'python scripts/check_install.py' to verify everything."
