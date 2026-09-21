@@ -27,6 +27,7 @@ FastAPI backend + single-page frontend with product cards, weight sliders, and "
 ```powershell
 # After setup (see below): double-click start.bat, or:
 cd "REAL SYSTEM"
+python scripts/bootstrap.py   # only needed on a fresh machine (installs deps + models)
 python -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000
 ```
 
@@ -60,14 +61,15 @@ REAL SYSTEM/
 │   └── test_phase7.py
 ├── scripts/                # Evaluation & diagnostic scripts
 │   ├── eval_harness.py     # Offline NDCG@10 evaluation
-│   ├── check_install.py    # Verifies deps / models / data (run after setup)
+│   ├── bootstrap.py        # Auto-run by start.bat: deps + models on first run
+│   ├── check_install.py    # Verifies deps / models / data (detailed report)
 │   └── fetch_models.py     # One-time HuggingFace model download
 ├── kaggle/                 # Kaggle GPU run scripts (Phase 4 & 6)
 ├── data/                   # Data files (NOT in repo — see setup below)
 │   └── processed/          # Parquet outputs from each phase
-├── requirements.txt        # Runtime dependencies (installed by setup.bat)
-├── setup.bat               # ONE-TIME setup: deps + models + checks
-├── start.bat               # Starts the server (after setup)
+├── requirements.txt        # Runtime dependencies
+├── start.bat               # THE ONLY FILE TO RUN: auto-setup (once) + server
+├── setup.bat               # Optional: explicit setup + full install checklist
 ├── PROGRESS.md             # Detailed development log
 └── README.md               # This file
 ```
@@ -83,20 +85,8 @@ git clone https://github.com/<your-username>/apparel-recommendation-system.git
 cd apparel-recommendation-system
 ```
 
-### 2. Run the setup script (one time)
-Double-click **`setup.bat`** — it installs the dependencies from `requirements.txt`,
-downloads the two HuggingFace models (~2.5 GB, needs internet), and finishes with
-an install check that tells you exactly what (if anything) is missing.
-
-Manual equivalent:
-```bash
-pip install -r requirements.txt
-python scripts/fetch_models.py
-python scripts/check_install.py
-```
-
-### 3. Download data files (shared separately)
-The `data/processed/` folder (~2.8 GB) contains pre-computed outputs from all phases. Download from the shared drive link and place it inside the project (the install check will confirm it):
+### 2. Download data files (shared separately)
+The `data/processed/` folder (~2.8 GB) contains pre-computed outputs from all phases. Download from the shared drive link and place it inside the project (start.bat will remind you if it's missing):
 
 | File | Size | Description |
 |------|------|-------------|
@@ -109,13 +99,21 @@ The `data/processed/` folder (~2.8 GB) contains pre-computed outputs from all ph
 | `product_sentiment.parquet` | 4.6 MB | Phase 6: Sentiment scores |
 | `embeddings_asins.parquet` | 3.7 MB | Phase 4: ASIN index for embeddings |
 
-### 4. Start the server
-Double-click **`start.bat`**, open **http://127.0.0.1:8000**, and search —
-e.g. `black shirt`, or try the typo test `blak shrit` (it auto-corrects).
-The first search waits ~1–2 min while the models load in the background;
-restarting is much faster (Windows file cache is warm).
+### 3. Double-click `start.bat` — that's it
+One file, one click. **First run only** it automatically installs the Python
+dependencies and downloads the two AI models (~2.5 GB, needs internet, ~5–15 min);
+every later run skips setup in under a second and just starts the server.
+If a step fails it says exactly what to do — re-running resumes where it left off.
 
-### 5. Run tests (optional)
+Then open **http://127.0.0.1:8000** and search — e.g. `black shirt`, or try the
+typo test `blak shrit` (it auto-corrects). The first search waits ~1–2 min while
+the models load in the background; restarting is much faster (file cache is warm).
+
+Optional: `setup.bat` does the same automatic setup but ends with a detailed
+✅/❌ checklist of everything (also runnable any time as
+`python scripts/check_install.py`).
+
+### 4. Run tests (optional)
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v   # 202 tests, ~10 s
 ```
@@ -125,8 +123,8 @@ Stop the server first if RAM is tight (16 GB machines can't run both).
 | Symptom | Fix |
 |---|---|
 | `"ready": false` forever / engine load error in the console | Run `python scripts/check_install.py` — it names the missing piece |
-| "Missing data files in data/processed/..." | Step 3 — the shared folder isn't in git |
-| Model download fails / hangs | Needs internet the FIRST run only; re-run `setup.bat` (downloads resume) |
+| "Missing data files in data/processed/..." | Step 2 — the shared folder isn't in git |
+| Model download fails / hangs | Needs internet the FIRST run only; re-run `start.bat` (downloads resume) |
 | `A tensor for a type must be provided to map the type` on model load | transformers 6.x + TF quirk — stay on transformers 4.x from requirements, or `pip install tf-keras` |
 | Server killed other apps / `ArrowMemoryError` | Close big apps — the engine needs ~6–8 GB RAM |
 

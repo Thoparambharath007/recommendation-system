@@ -746,3 +746,11 @@ Goal: a teammate can `git clone` -> setup.bat -> start.bat -> get recommendation
   corrected `black shirt`, 5 genuine items. README/SETUP rewritten to the
   5-step flow + troubleshooting table; stale endpoint table fixed
   (/api/suggest /api/facets /api/brands now documented).
+### Follow-up (same day) - single-click entry point
+start.bat now SELF-INSTALLS: it calls scripts/bootstrap.py (idempotent, ~0.2 s
+when already set up) which pip-installs requirements.txt on first run, downloads
+the 2 HF models if not cached, and warn-only checks the shared data folder;
+then frees port 8000 and starts uvicorn. setup.bat reduced to optional explicit
+report (bootstrap + check_install). README/SETUP renumbered to 3 steps:
+clone -> drop data folder -> double-click start.bat. Verified live: fast-path
+boot, server ready, navy polo query OK.

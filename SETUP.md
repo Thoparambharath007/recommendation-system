@@ -95,28 +95,28 @@ REAL SYSTEM/
 
 Python **3.11+** from python.org (tick "Add to PATH"), then `git clone` the repo.
 
-### Step 2: Run the setup script (one time)
-
-Double-click **`setup.bat`** — it installs `requirements.txt`, downloads the two
-HuggingFace models (~2.5 GB, the ONLY step needing internet), and ends with
-`scripts/check_install.py`, which verifies deps/models/data with plain messages.
-
-Manual equivalent:
-```bash
-pip install -r requirements.txt
-python scripts/fetch_models.py
-python scripts/check_install.py
-```
-
-### Step 3: Place the shared data folder
+### Step 2: Place the shared data folder
 
 Copy the shared `data/processed/` folder (~2.8 GB — NOT in git) into the project.
-`check_install.py` tells you if anything is missing; the server also refuses to
-start with a clear "Missing data files in data/processed/..." error.
+`start.bat` reminds you on every launch if it's missing, and the server refuses
+to serve recommendations with a clear "Missing data files in data/processed/..." error.
 
-### Step 4: Start the server
+### Step 3: Double-click `start.bat` — it self-installs on first run
 
-Double-click **`start.bat`** (or `python -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000`).
+**One file does everything.** On the FIRST run on a machine, `start.bat`
+automatically (via `scripts/bootstrap.py`):
+
+1. `pip install -r requirements.txt` (deps from Step 1 missing?)
+2. Downloads the two HuggingFace models (~2.5 GB — the only step needing internet)
+3. Warns (without blocking) if the data folder isn't in place yet
+
+Every LATER run these checks cost ~0.2 s and it goes straight to the server.
+A failed step prints the fix and re-running resumes where it left off.
+
+`setup.bat` is the optional explicit version (same bootstrap + a full ✅/❌
+checklist via `scripts/check_install.py`).
+
+### Step 4: Use it
 
 - The server binds in ~3 s and the page is usable immediately (search + autocomplete);
   the engine loads in a background thread (~1–2 min cold, faster warm).
