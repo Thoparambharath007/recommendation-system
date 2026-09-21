@@ -81,8 +81,8 @@ Python **3.11+** from https://www.python.org/downloads/ — tick **"Add python.e
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/<your-username>/apparel-recommendation-system.git
-cd apparel-recommendation-system
+git clone https://github.com/Thoparambharath007/recommendation-system.git
+cd recommendation-system
 ```
 
 ### 2. Download data files (shared separately)
