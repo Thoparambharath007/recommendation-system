@@ -20,14 +20,16 @@ for /f "tokens=5" %%p in ('netstat -ano ^| findstr /C:":8000 " ^| findstr /I "LI
 set "PY=C:\python\python.exe"
 if not exist "%PY%" set "PY=python"
 
-:: HF_HUB_OFFLINE: models are cached locally (required, transformers 6.x quirk).
-:: ONEDNN/OFFLINE: see PROGRESS.md gotchas. The two below only cut startup
-:: chatter/overhead: no tokenizer thread warnings, no verbose model logs.
-set HF_HUB_OFFLINE=1
+:: HF_HUB_OFFLINE is set BY src/web_app.py itself - only when the two models
+:: are already in the local cache (a fresh install must stay ONLINE to
+:: download them; run setup.bat once). ONEDNN quirk: see PROGRESS.md.
 set TF_ENABLE_ONEDNN_OPTS=0
 set TOKENIZERS_PARALLELISM=false
 set TRANSFORMERS_VERBOSITY=error
 
+echo.
+echo First time on this machine? Run setup.bat once (installs deps + models),
+echo and make sure the shared data/processed folder is in place (README).
 echo.
 echo Starting server... the web page is available IMMEDIATELY at
 echo   http://127.0.0.1:8000

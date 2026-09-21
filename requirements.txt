@@ -1,0 +1,19 @@
+# StyleSense — runtime dependencies (the web server + recommendation engine).
+# Tested exact versions: Python 3.13, pandas 3.0.3, numpy 2.5.0,
+# scikit-learn 1.8.0, scipy 1.17.1, pyarrow 23.0.1, fastapi 0.136.1,
+# uvicorn 0.48.0, sentence-transformers 5.7.0, torch 2.10.0 (CPU).
+# Python 3.11+ required. Install with:  setup.bat   (or: pip install -r requirements.txt)
+
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+scipy>=1.13
+pyarrow>=16
+fastapi>=0.115
+uvicorn>=0.30
+sentence-transformers>=3.3
+torch>=2.4
+
+# NOT required to run the server (only to rebuild data/processed from scratch):
+#   flair          — Phase 6 sentiment scoring (runs on Kaggle, outputs are shared)
+#   tensorflow/h5py/tf-keras — only on transformers 6.x; see README troubleshooting

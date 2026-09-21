@@ -14,7 +14,26 @@ import sys
 import time
 from pathlib import Path
 
-os.environ["HF_HUB_OFFLINE"] = "1"
+
+def _ensure_hub_mode() -> None:
+    """PROGRESS.md gotcha #3: with the models cached, run fully OFFLINE (Hub
+    HEAD requests otherwise hang). On a FRESH machine the models are NOT in
+    the cache yet, so forcing offline there makes the engine unstartable —
+    only set the flag when both cascade models are actually cached.
+    setup.bat / scripts/fetch_models.py download them the first time."""
+    if os.environ.get("HF_HUB_OFFLINE"):
+        return  # the operator set it explicitly — respect it
+    hub = Path(os.environ.get("HF_HUB_CACHE")
+               or Path.home() / ".cache" / "huggingface" / "hub")
+    cached = all((hub / m).exists() for m in (
+        "models--sentence-transformers--sentence-t5-xl",
+        "models--sentence-transformers--all-distilroberta-v1",
+    ))
+    if cached:
+        os.environ["HF_HUB_OFFLINE"] = "1"
+
+
+_ensure_hub_mode()
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -30,6 +49,7 @@ from pydantic import BaseModel, Field
 from config import (
     DATA_PROCESSED_DIR,
     PROCESSED_METADATA_PATH,
+    PRODUCT_TEXTS_PATH,
 )
 from content_filter import ContentFilter
 from phase5_similarity import INDEX_ASINS_PATH, INDEX_PATH, EmbeddingIndex, QueryEmbedder
@@ -128,6 +148,24 @@ class Engine:
     def __init__(self):
         import gc
 
+        # Fail FAST with an actionable message on a fresh clone (the shared
+        # data/processed folder is not in git) instead of an Arrow exception
+        # from deep inside the warm-up thread.
+        required = [
+            PROCESSED_METADATA_PATH, INDEX_PATH, INDEX_ASINS_PATH,
+            DATA_PROCESSED_DIR / "product_details.parquet", PRODUCT_TEXTS_PATH,
+        ]
+        missing = [p.name for p in required if not p.exists()]
+        if missing:
+            raise RuntimeError(
+                "Missing data files in data/processed/: "
+                + ", ".join(missing)
+                + " — that folder is NOT in git; download the shared "
+                "~2.8 GB data/processed folder into the project and restart "
+                "(README 'Setup for Team Members' step 3). "
+                "Run 'python scripts/check_install.py' to verify everything."
+            )
+
         t0 = time.time()
         print("loading content filter ...")
         df = pd.read_parquet(PROCESSED_METADATA_PATH)
@@ -174,8 +212,6 @@ class Engine:
             print("  no co-purchase edges found (collab signal off)")
 
         print("loading titles ...")
-        from config import PRODUCT_TEXTS_PATH
-
         titles_df = pd.read_parquet(PRODUCT_TEXTS_PATH, columns=["parent_asin", "title"])
         self.titles = {
             str(a): clean_display_text(t)

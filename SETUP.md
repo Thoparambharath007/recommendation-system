@@ -91,40 +91,45 @@ REAL SYSTEM/
 
 ## How to Set Up (Step by Step)
 
-### Step 1: Install Python Dependencies
+### Step 1: Install Python + clone
 
+Python **3.11+** from python.org (tick "Add to PATH"), then `git clone` the repo.
+
+### Step 2: Run the setup script (one time)
+
+Double-click **`setup.bat`** — it installs `requirements.txt`, downloads the two
+HuggingFace models (~2.5 GB, the ONLY step needing internet), and ends with
+`scripts/check_install.py`, which verifies deps/models/data with plain messages.
+
+Manual equivalent:
 ```bash
-pip install pandas numpy scikit-learn scipy pyarrow fastapi uvicorn sentence-transformers torch
+pip install -r requirements.txt
+python scripts/fetch_models.py
+python scripts/check_install.py
 ```
 
-**Versions tested:** Python 3.12+, pandas 3.0+, torch 2.10+, sentence-transformers 5.7+
+### Step 3: Place the shared data folder
 
-### Step 2: Download the AI Models (ONE TIME, needs internet)
+Copy the shared `data/processed/` folder (~2.8 GB — NOT in git) into the project.
+`check_install.py` tells you if anything is missing; the server also refuses to
+start with a clear "Missing data files in data/processed/..." error.
 
-The system uses two pre-trained AI models that are NOT included in this folder (they're ~3 GB total). Run this command ONCE with internet connection:
+### Step 4: Start the server
 
-```bash
-python -c "from sentence_transformers import SentenceTransformer; print('Downloading T5-xl (2.2 GB)...'); SentenceTransformer('sentence-transformers/sentence-t5-xl'); print('Downloading RoBERTa (330 MB)...'); SentenceTransformer('sentence-transformers/all-distilroberta-v1'); print('All models downloaded!')"
-```
+Double-click **`start.bat`** (or `python -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000`).
 
-This downloads and caches the models to `~/.cache/huggingface/hub/`. After this, the server works offline.
-
-### Step 3: Start the Server
-
-```bash
-cd "REAL SYSTEM"
-python -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000
-```
-
-- First startup takes **~2 minutes** on CPU (loading models + 2.28 GB embedding index)
+- The server binds in ~3 s and the page is usable immediately (search + autocomplete);
+  the engine loads in a background thread (~1–2 min cold, faster warm).
 - Check readiness: http://127.0.0.1:8000/health → `{"ready": true}` when loaded
-- Open the UI: **http://127.0.0.1:8000**
+- Open the UI: **http://127.0.0.1:8000** — search `black shirt` to get recommendations
+- `HF_HUB_OFFLINE` is decided automatically: offline when both models are cached,
+  online on a fresh machine so the first download can happen.
 
-### Step 4: Run Tests
+### Step 5: Run Tests
 
 ```bash
 cd "REAL SYSTEM"
-python -m unittest discover -s tests -p "test_phase*.py" -v
+python -m unittest discover -s tests -p "test_*.py" -v   # 202 tests
 ```
 
 ---
@@ -230,7 +235,10 @@ Only the **T5 and RoBERTa** models are needed at runtime (to embed the user's qu
 |----------|--------|-------------|
 | `/` | GET | Serves the web UI (`web/index.html`) |
 | `/health` | GET | Returns `{"ready": true/false}` — check if models are loaded |
-| `/api/recommend` | POST | Main recommendation endpoint (accepts query, weights, top_k) |
+| `/api/recommend` | POST | Main recommendation endpoint (query, weights, top_k, brand, size, min_rating, price in INR) |
+| `/api/suggest?q=` | GET | Autocomplete — works even before the engine is warm |
+| `/api/facets` | GET | Brand/type/size/price-bucket filter choices (blocks until warm) |
+| `/api/brands?q=` | GET | Search all ~35k brands (prefix first, contains fallback) |
 | `/api/collab/{asin}` | GET | "People also bought" data for a specific product |
 
 ### Example API Call

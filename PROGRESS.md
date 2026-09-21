@@ -715,3 +715,34 @@ Split the 470-line single file into three (each <500 lines) and added:
   items >= 4.0★; combo hanes+L+4★+₹415–₹1,245 -> 3 clean items; all three
   web assets serve 200; /api/collab still routes (mount not shadowing);
   unknown path 404s cleanly; 6-query type gauntlet unchanged (ALL PASS).
+
+## Session 2026-09-21 - Clone-to-run pass (GitHub-ready for the team)
+
+Goal: a teammate can `git clone` -> setup.bat -> start.bat -> get recommendations.
+
+### Blockers found + fixed
+- **Fresh-machine death trap**: `HF_HUB_OFFLINE=1` was set unconditionally
+  (start.bat + web_app) - on a machine without cached models the engine could
+  never download them. web_app now sets it ONLY when both cascade models are
+  in the HF hub cache; start.bat no longer forces it.
+- No root requirements.txt -> added (versions tested: py3.13/pandas3.0/torch2.10).
+- No bootstrap -> added **setup.bat** (pip install + fetch_models + check_install)
+  and **scripts/fetch_models.py** (one-time ~2.5 GB model download).
+- Missing data/processed = raw Arrow exception in the warm-up thread -> Engine
+  now fails fast with a named-file "download the shared folder (README step 3)"
+  message; **scripts/check_install.py** pre-checks python/deps/models/data with
+  plain-language fixes.
+- `datasets/` (12 GB raw Amazon data) was NOT gitignored -> one `git add .`
+  from an unpushable repo. Added to .gitignore (verified via check-ignore).
+- **start.bat LF-only rewrite broke it** (cmd ate characters: "'tle' is not
+  recognized"). Batch files MUST be CRLF + ASCII; both .bat files normalized
+  (em-dashes in echoes replaced). Lesson: any future tool-edit of a .bat must
+  preserve CRLF.
+
+### Verified
+- check_install.py: 20/20 OK on dev machine; web_app import auto-sets offline.
+- Full suite: **202/202 PASS** (9.2 s).
+- Live via start.bat: banner clean, binds ~3 s, engine ready, `"blak shrit"` ->
+  corrected `black shirt`, 5 genuine items. README/SETUP rewritten to the
+  5-step flow + troubleshooting table; stale endpoint table fixed
+  (/api/suggest /api/facets /api/brands now documented).

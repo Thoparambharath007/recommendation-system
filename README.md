@@ -25,12 +25,13 @@ Built on the **2023 UCSD Amazon Review Dataset** (371,902 men's shirts/tops).
 FastAPI backend + single-page frontend with product cards, weight sliders, and "People Also Bought" strip.
 
 ```powershell
-# Start the server (models load in ~2 min on CPU)
+# After setup (see below): double-click start.bat, or:
 cd "REAL SYSTEM"
-$env:HF_HUB_OFFLINE='1'; python -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000
+python -m uvicorn src.web_app:app --host 127.0.0.1 --port 8000
 ```
 
-Open: http://127.0.0.1:8000
+Open: http://127.0.0.1:8000 — the page loads instantly; the first search waits
+~1–2 min while the models load in the background (`/health` says `{"ready":true}` when done).
 
 ## Project Structure
 
@@ -58,15 +59,23 @@ REAL SYSTEM/
 │   ├── test_phase6.py
 │   └── test_phase7.py
 ├── scripts/                # Evaluation & diagnostic scripts
-│   └── eval_harness.py     # Offline NDCG@10 evaluation
+│   ├── eval_harness.py     # Offline NDCG@10 evaluation
+│   ├── check_install.py    # Verifies deps / models / data (run after setup)
+│   └── fetch_models.py     # One-time HuggingFace model download
 ├── kaggle/                 # Kaggle GPU run scripts (Phase 4 & 6)
 ├── data/                   # Data files (NOT in repo — see setup below)
 │   └── processed/          # Parquet outputs from each phase
+├── requirements.txt        # Runtime dependencies (installed by setup.bat)
+├── setup.bat               # ONE-TIME setup: deps + models + checks
+├── start.bat               # Starts the server (after setup)
 ├── PROGRESS.md             # Detailed development log
 └── README.md               # This file
 ```
 
-## Setup for Team Members
+## Setup for Team Members (clone → recommendations in ~15 min)
+
+### 0. Install Python (one time, per machine)
+Python **3.11+** from https://www.python.org/downloads/ — tick **"Add python.exe to PATH"** during install.
 
 ### 1. Clone the repo
 ```bash
@@ -74,13 +83,20 @@ git clone https://github.com/<your-username>/apparel-recommendation-system.git
 cd apparel-recommendation-system
 ```
 
-### 2. Install dependencies
+### 2. Run the setup script (one time)
+Double-click **`setup.bat`** — it installs the dependencies from `requirements.txt`,
+downloads the two HuggingFace models (~2.5 GB, needs internet), and finishes with
+an install check that tells you exactly what (if anything) is missing.
+
+Manual equivalent:
 ```bash
-pip install pandas numpy scikit-learn scipy pyarrow fastapi uvicorn sentence-transformers flair torch
+pip install -r requirements.txt
+python scripts/fetch_models.py
+python scripts/check_install.py
 ```
 
 ### 3. Download data files (shared separately)
-The `data/processed/` folder (~2.8 GB) contains pre-computed outputs from all phases. Download from the shared drive link and place inside the project:
+The `data/processed/` folder (~2.8 GB) contains pre-computed outputs from all phases. Download from the shared drive link and place it inside the project (the install check will confirm it):
 
 | File | Size | Description |
 |------|------|-------------|
@@ -93,20 +109,26 @@ The `data/processed/` folder (~2.8 GB) contains pre-computed outputs from all ph
 | `product_sentiment.parquet` | 4.6 MB | Phase 6: Sentiment scores |
 | `embeddings_asins.parquet` | 3.7 MB | Phase 4: ASIN index for embeddings |
 
-### 4. Download HuggingFace models (first time only)
-The server needs two cached models (~3 GB total):
-- `sentence-transformers/sentence-t5-xl` (2.2 GB)
-- `sentence-transformers/all-distilroberta-v1` (330 MB)
+### 4. Start the server
+Double-click **`start.bat`**, open **http://127.0.0.1:8000**, and search —
+e.g. `black shirt`, or try the typo test `blak shrit` (it auto-corrects).
+The first search waits ~1–2 min while the models load in the background;
+restarting is much faster (Windows file cache is warm).
 
-Run once with internet to download:
+### 5. Run tests (optional)
 ```bash
-python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/sentence-t5-xl'); SentenceTransformer('sentence-transformers/all-distilroberta-v1')"
+python -m unittest discover -s tests -p "test_*.py" -v   # 202 tests, ~10 s
 ```
+Stop the server first if RAM is tight (16 GB machines can't run both).
 
-### 5. Run tests
-```bash
-python -m unittest discover -s tests -p "test_phase*.py" -v
-```
+### Troubleshooting
+| Symptom | Fix |
+|---|---|
+| `"ready": false` forever / engine load error in the console | Run `python scripts/check_install.py` — it names the missing piece |
+| "Missing data files in data/processed/..." | Step 3 — the shared folder isn't in git |
+| Model download fails / hangs | Needs internet the FIRST run only; re-run `setup.bat` (downloads resume) |
+| `A tensor for a type must be provided to map the type` on model load | transformers 6.x + TF quirk — stay on transformers 4.x from requirements, or `pip install tf-keras` |
+| Server killed other apps / `ArrowMemoryError` | Close big apps — the engine needs ~6–8 GB RAM |
 
 ## Models Used (all pre-trained, no training)
 
