@@ -71,3 +71,8 @@ DuckDB idea/ppt/
 # ── Local working areas (never publish) ──
 JUNK created by qoder/
 SRS.pdf
+
+# Local scratch artifacts (not part of the project)
+review.html
+segregation/
+shirt_attribute_experiment_backup*.zip
