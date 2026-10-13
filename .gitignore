@@ -43,3 +43,31 @@ desktop.ini
 # ── Logs ──
 *.log
 scripts/*.txt
+
+# Kaggle API credentials - NEVER commit
+kaggle.json
+
+# ── New architecture (DuckDB query app) lives in "DuckDB idea/" ──
+# Repo tracks only the master Parquet so a fresh clone runs one-click;
+# CSV copy, backups and intermediate build data stay local (shared via OneDrive).
+DuckDB idea/data/*
+!DuckDB idea/data/shirts_master.parquet
+DuckDB idea/ppt/
+
+# ── Old phase-pipeline architecture: removed from the repo in Oct 2026,
+# files kept on disk as legacy reference only ──
+/src/
+/web/
+/scripts/
+/tests/
+/data/
+/kaggle/
+/start.bat
+/setup.bat
+/requirements.txt
+/SETUP.md
+/PROGRESS.md
+
+# ── Local working areas (never publish) ──
+JUNK created by qoder/
+SRS.pdf

@@ -1,0 +1,69 @@
+[
+  {
+    "query": "plain pink shirt under 1200",
+    "matches": 5,
+    "sql": "SELECT parent_asin FROM shirts WHERE (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|pink|') AND pattern IN ('plain') AND price_inr_est < 1200) AND (LOWER(TRIM(COALESCE(color, ''))) = 'pink' AND pattern = 'plain')",
+    "product_ids": [
+      "B084HF9QKV",
+      "B07PT7P172",
+      "B005CHVJJ2",
+      "B005CHVJQK",
+      "B005CHVK50"
+    ],
+    "elapsed_seconds": 4.505
+  },
+  {
+    "query": "plain pink shirt full sleeve under 1200",
+    "matches": 3,
+    "sql": "SELECT parent_asin FROM shirts WHERE (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|pink|') AND pattern IN ('plain') AND sleeve = 'full' AND price_inr_est < 1200) AND (LOWER(TRIM(COALESCE(color, ''))) = 'pink' AND pattern = 'plain')",
+    "product_ids": [
+      "B005CHVJJ2",
+      "B005CHVJQK",
+      "B005CHVK50"
+    ],
+    "elapsed_seconds": 2.817
+  },
+  {
+    "query": "plain pink shirt long sleeved under 1200",
+    "matches": 3,
+    "sql": "SELECT parent_asin FROM shirts WHERE (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|pink|') AND pattern IN ('plain') AND sleeve = 'full' AND price_inr_est < 1200) AND (LOWER(TRIM(COALESCE(color, ''))) = 'pink' AND pattern = 'plain')",
+    "product_ids": [
+      "B005CHVJJ2",
+      "B005CHVJQK",
+      "B005CHVK50"
+    ],
+    "elapsed_seconds": 2.736
+  },
+  {
+    "query": "plain pink shirt half sleeve under 1200",
+    "matches": 2,
+    "sql": "SELECT parent_asin FROM shirts WHERE (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|pink|') AND pattern IN ('plain') AND sleeve = 'half' AND price_inr_est < 1200) AND (LOWER(TRIM(COALESCE(color, ''))) = 'pink' AND pattern = 'plain')",
+    "product_ids": [
+      "B07PT7P172",
+      "B084HF9QKV"
+    ],
+    "elapsed_seconds": 2.956
+  },
+  {
+    "query": "plain black shirt full sleeve under 1500",
+    "matches": 14,
+    "sql": "SELECT parent_asin FROM shirts WHERE (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|black|') AND pattern IN ('plain') AND sleeve = 'full' AND price_inr_est < 1500) AND (LOWER(TRIM(COALESCE(color, ''))) = 'black' AND pattern = 'plain')",
+    "product_ids": [
+      "B09RH1HVDS",
+      "B0B7RMYL69",
+      "B09Q91WYV3",
+      "B09Q91VMJ3",
+      "B09Q928JXC",
+      "B07H35Y5Z9",
+      "B0BK15KD2G",
+      "B07D566B9H",
+      "B09VCDPSN6",
+      "B07P7PL7KB",
+      "B0B8CG84P9",
+      "B013G3K9W6",
+      "B019XC3EXU",
+      "B019XC3HUU"
+    ],
+    "elapsed_seconds": 2.921
+  }
+]

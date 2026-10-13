@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shirt Studio · Find your next shirt</title>
+<style>
+:root{--ink:#20251e;--muted:#677060;--green:#284c37;--paper:#f5f5ef;--line:#dfe3d8}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif}header{border-bottom:1px solid var(--line);background:#fff}nav,main{max-width:1220px;margin:auto;padding:22px 30px}nav{display:flex;align-items:center;justify-content:space-between}.brand{font-size:22px;font-weight:750;letter-spacing:-.7px}.brand span{color:var(--green)}.pill{font-size:12px;background:#edf1e8;padding:7px 12px;border-radius:30px}.hero{max-width:860px;margin:38px 0 24px}.eyebrow{font-size:12px;color:var(--green);font-weight:700;letter-spacing:2px;text-transform:uppercase}h1{font-size:clamp(30px,5vw,48px);line-height:1.1;letter-spacing:-1.8px;margin:14px 0}p{color:var(--muted)}form{background:#fff;border:1px solid var(--line);border-radius:15px;padding:10px;display:flex;gap:8px}input[type=text]{flex:1;min-width:0;font:inherit;border:0;padding:12px;background:transparent;outline:none}input[type=text]:focus{box-shadow:inset 0 -2px var(--green)}button{border:0;border-radius:9px;font:inherit;cursor:pointer;background:var(--green);color:white;padding:12px 22px}button:disabled{opacity:.55;cursor:wait}.examples{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.examples button{font-size:12px;background:#e9ede3;color:var(--green);padding:7px 11px}.options{display:flex;justify-content:space-between;gap:15px;align-items:center;color:var(--muted);font-size:13px}.options label{display:flex;gap:7px;align-items:center}select{padding:6px;border:1px solid var(--line);border-radius:6px;background:white}.info{margin:24px 0 15px}.info h2{font-size:20px;margin:0}.info p{margin:5px 0}.error{color:#84332d;background:#ffefec;padding:15px;border-radius:9px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.card{background:white;border:1px solid var(--line);border-radius:13px;overflow:hidden}.photo{display:block;background:#fff;width:100%;height:255px;object-fit:contain;padding:14px}.photo-error{display:none;height:255px;place-items:center;background:#f0f1eb;color:var(--muted)}.body{padding:16px}.store{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}.title{font-size:14px;margin:6px 0 12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:42px}.price{font-size:20px;font-weight:700}.price small{font-size:10px;color:var(--muted);font-weight:500}.rating{font-size:12px;margin:6px 0;color:var(--muted)}.tags{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0}.tag{font-size:11px;padding:3px 7px;border-radius:5px;background:#eef1e9}.badge{font-size:10px;background:#fbefdb;color:#765916;padding:4px 7px;border-radius:5px;display:inline-block}.badge.ok{background:#e5eee5;color:#355b36}.asin{font:10px ui-monospace,monospace;color:var(--muted);margin-top:9px}.image-link{font-size:12px;color:var(--green)}details{margin:24px 0;font-size:13px}summary{cursor:pointer;color:var(--green)}pre{padding:15px;overflow:auto;border-radius:9px;background:#e9ede3;font-size:12px}footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px;margin:35px 0 20px}#busy{color:var(--green);margin-top:16px}@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:750px){.grid{grid-template-columns:repeat(2,1fr)}nav,main{padding:18px}.pill{max-width:170px;text-align:center}.hero{margin-top:25px}.photo{height:220px}}@media(max-width:450px){.grid{grid-template-columns:1fr}.options{align-items:flex-start;flex-direction:column}form{flex-direction:column}.photo{height:300px}}
+</style>
+</head>
+<body>
+<header><nav><div class="brand">Shirt <span>Studio</span></div><span class="pill" id="catalog-count">Loading catalog…</span></nav></header>
+<main>
+<section class="hero"><div class="eyebrow">Your words. Your wardrobe.</div><h1>Describe the shirt.<br>Find your options.</h1><p>Search by color, pattern, sleeves, fabric and budget. Explore shirts from the Amazon 2023 research catalog.</p></section>
+<form id="search"><input id="query" type="text" maxlength="1000" aria-label="Describe a shirt" placeholder="Green and white striped shirts under ₹2,000" required><button id="submit" type="submit">Find shirts →</button></form>
+<div class="examples" id="examples"><button type="button">Maroon plain full sleeve shirts</button><button type="button">Blue and white striped shirts</button><button type="button">Cotton shirts under ₹2,000</button></div>
+<div class="options"><label><input type="checkbox" id="uncertain" checked>Include uncertain color and pattern predictions</label><label>Show <select id="limit"><option>12</option><option>24</option><option>48</option></select> shirts</label></div>
+<p id="busy" hidden role="status">Interpreting your request and searching the catalog…</p>
+<div class="info" id="info" aria-live="polite"></div><div class="grid" id="results"></div>
+<details id="query-detail" hidden><summary>How this search worked</summary><p>Request → LLM-generated filter SQL → validation → DuckDB scans Parquet → ranking.</p><pre id="sql"></pre><p id="ranking"></p></details>
+<footer>Prices come from historical metadata or estimates; INR values use the project's ₹83/USD conversion. Availability and current Amazon prices are not checked. Color and pattern labels are model predictions; “checks passed” means heuristic checks, not human verification. Shirts with unknown sleeve tags are excluded when you request a specific sleeve length.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const text=(tag,value,cls)=>{const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;};
+const safeURL=value=>{try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:null;}catch{return null;}};
+function render(data){
+ $('results').replaceChildren();$('info').replaceChildren();
+ const unsupported=data.unsupported?.length;
+ $('info').append(text('h2',unsupported?'This detail is unavailable':`${data.total_matches.toLocaleString()} matching shirts`));
+ $('info').append(text('p',data.explanation||''));
+ if(unsupported)$('info').append(text('p','Unavailable attributes: '+data.unsupported.join(', ')));
+ if(!unsupported&&!data.products.length)$('info').append(text('p','Try another color, pattern or budget. Your filters have not been relaxed.'));
+ for(const p of data.products){
+  const card=text('article','','card');const image=document.createElement('img');image.className='photo';image.alt=p.title||'Shirt';image.loading='lazy';image.referrerPolicy='no-referrer';const url=safeURL(p.image_url);const fallback=text('div','Image unavailable','photo-error');image.onerror=()=>{image.style.display='none';fallback.style.display='grid';};if(url)image.src=url;else{image.style.display='none';fallback.style.display='grid';}card.append(image,fallback);
+  const body=text('div','','body');body.append(text('div',p.store||'Shirt catalog','store'),text('h3',p.title||p.parent_asin,'title'));
+  const price=text('div',p.price_inr_est==null?'Price unavailable':'₹'+Math.round(p.price_inr_est).toLocaleString('en-IN'),'price');const exact=(p.price_source||'').startsWith('exact');price.append(text('small',exact?' · historical price':' · estimated price'));body.append(price);
+  body.append(text('div',`${p.average_rating??'—'} / 5 · ${(p.rating_number||0).toLocaleString()} ratings`,'rating'));
+  const tags=text('div','','tags');for(const value of [...(p.color||'').split('|').filter(Boolean),(p.pattern||'unknown').replaceAll('_',' '),p.sleeve==='full'?'full sleeve':p.sleeve==='half'?'half sleeve':'sleeve unknown'].filter(Boolean))tags.append(text('span',value,'tag'));body.append(tags);
+  body.append(text('span',p.vision_status==='ok'?'Color/pattern checks passed':p.vision_status==='needs_review'?'Color/pattern uncertain':'Color/pattern unavailable','badge'+(p.vision_status==='ok'?' ok':'')));
+  body.append(text('div',p.parent_asin,'asin'));if(url){const a=text('a','Open full image','image-link');a.href=url;a.target='_blank';a.rel='noopener noreferrer';body.append(a);}card.append(body);$('results').append(card);
+ }
+ $('query-detail').hidden=!data.sql;$('sql').textContent=data.sql||'';$('ranking').textContent=data.ranking||'';
+}
+async function search(){
+ $('submit').disabled=true;$('busy').hidden=false;
+ try{const response=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:$('query').value,limit:Number($('limit').value),include_uncertain:$('uncertain').checked})});const data=await response.json();if(!response.ok)throw new Error(typeof data.detail==='string'?data.detail:'The search request could not be completed.');render(data);}catch(e){$('info').replaceChildren(text('p',e.message,'error'));}finally{$('submit').disabled=false;$('busy').hidden=true;}
+}
+$('search').addEventListener('submit',e=>{e.preventDefault();search();});$('examples').addEventListener('click',e=>{if(e.target.tagName==='BUTTON'){$('query').value=e.target.textContent;search();}});
+(async()=>{try{const health=await(await fetch('/api/health')).json();$('catalog-count').textContent=health.products.toLocaleString()+' shirts';render(await(await fetch('/api/browse')).json());if(!health.llm_configured)$('info').append(text('p','Catalog browsing is ready. Add your API settings to the project .env file to enable natural-language search.'));}catch(e){$('info').append(text('p','Could not load the catalog. Check the server terminal.','error'));}})();
+</script>
+</body></html>

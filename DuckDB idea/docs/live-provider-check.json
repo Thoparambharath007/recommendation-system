@@ -1,0 +1,22 @@
+[
+  {
+    "query": "Find blue and white striped shirts under 2000 rupees",
+    "http_status": 200,
+    "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+    "sql": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|blue|') AND CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|white|') AND pattern IN ('horizontal_stripes', 'vertical_stripes', 'diagonal_stripes') AND price_inr_est < 2000",
+    "matches": 10,
+    "returned": 5,
+    "elapsed_seconds": 1.535,
+    "filter_checks_passed": true
+  },
+  {
+    "query": "Find maroon plain full sleeve shirts",
+    "http_status": 200,
+    "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+    "sql": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|maroon|') AND pattern IN ('plain') AND sleeve = 'full'",
+    "matches": 287,
+    "returned": 5,
+    "elapsed_seconds": 1.29,
+    "filter_checks_passed": true
+  }
+]
