@@ -1,0 +1,12 @@
+{
+  "source_archive": "garment_results_v2_backup.zip",
+  "original_master_preserved": true,
+  "original_master_sha256": "3a41efdc62725298064ec76ace0e361748b98ab5b14384be368641048fef1bf5",
+  "original_rows": 50224,
+  "active_products": 19834,
+  "recorded_listing_options": 32987,
+  "active_catalog": "data/shirts_catalog.parquet",
+  "options": "data/shirt_size_options.parquet",
+  "unavailable_size_products": 16343,
+  "note": "One record per unique shirt-candidate URL, not verified unique physical products. Uncertain/non-shirt records remain in the original master and result archive."
+}

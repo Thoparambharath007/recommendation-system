@@ -64,7 +64,8 @@ def merge_archive(archive, master_path=MASTER):
     merged.to_parquet(temp, index=False)
     check = pd.read_parquet(temp)
     pd.testing.assert_frame_equal(merged, check)
-    csv_path = master_path.with_suffix('.csv')
+    export_dir = master_path.parent / 'exports'; export_dir.mkdir(exist_ok=True)
+    csv_path = export_dir / (master_path.stem + '.csv')
     csv_temp = csv_path.with_suffix('.csv.tmp')
     merged.to_csv(csv_temp, index=False)
     temp.replace(master_path); csv_temp.replace(csv_path)
@@ -76,7 +77,8 @@ def merge_archive(archive, master_path=MASTER):
         'master_sha256':hashlib.sha256(master_path.read_bytes()).hexdigest(),
         'source_archive':str(archive.resolve()),
         'policy':'Include needs_review predictions with provenance; failed masks stay unknown.'}
-    (master_path.parent / 'vision_merge_summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
+    report_dir = master_path.parent / 'reports'; report_dir.mkdir(exist_ok=True)
+    (report_dir / 'vision_merge_summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
     return summary
 
 

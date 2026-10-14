@@ -167,7 +167,7 @@ roles=[
  'My responsibility is dataset preparation. I work with the Amazon product metadata and the shirt-selection output. I check product IDs, organize useful fields and prepare the master catalog. The final catalog contains 50,224 products. Its stable product IDs let us attach image-based attributes without mixing up products.',
  [('Why do you need parent_asin?','It connects a product to its color and pattern results. Row positions can change, but an ID match keeps the right attributes with the right product.'),
   ('Did you collect live Amazon products?','No. This is a research catalog derived from the Amazon 2023 dataset. The images are accessed through the saved URLs.')],
- 'data/shirts_master.parquet, data/shirts_master.csv, merge_vision.py and data/vision_merge_summary.json.',
+ 'data/shirts_master.parquet, data/exports/shirts_master.csv, merge_vision.py and data/reports/vision_merge_summary.json.',
  'Product titles and old color tags are not always correct. A parent product can also have variants; the selected image does not describe every possible variant.'),
 ('Role 2 Image based color and pattern extraction',
  'Use the product image to estimate the colors and pattern of the shirt fabric.',
@@ -223,7 +223,7 @@ roles=[
  'My responsibility is the interface and end-to-end integration. I connect the search form to the backend and show returned products as cards. I display estimated prices and uncertain attributes clearly. I test that valid requests work and unsafe SQL is rejected. The latest test run passed 18 automated checks, and live requests were also tested.',
  [('How do you test the whole flow?','I send a real request through the API and check the returned records against the requested colors, pattern and budget. Automated tests also cover failures and invalid SQL.'),
   ('What if there are no matches?','The page shows no matching products. It does not silently remove a budget or color condition to fill the screen.')],
- 'app.py, web/index.html, launch.py, Start_Query_App.bat and the tests folder.',
+ 'app.py, web/index.html, launch.py, start.bat and the tests folder.',
  'Passing software tests does not establish the visual accuracy of every color or pattern tag. Live stock, delivery and personalized recommendations are not implemented.')]
 
 for title,job,tasks,terms,script,questions,files,limitation in roles:
@@ -242,7 +242,7 @@ for title,job,tasks,terms,script,questions,files,limitation in roles:
 
 page('Demonstration and shared judge questions')
 h('A simple demonstration')
-for text in ['Start the app with Start_Query_App.bat and open http://127.0.0.1:8010.',
+for text in ['Start the app with start.bat and open http://127.0.0.1:8010.',
  'Search for plain black shirt under 1500. In the latest checked request, 20 products matched; all returned records were tagged only black, plain and below INR 1,500.',
  'Show a card and explain its image, product ID, price source and uncertainty status. Open the SQL details to explain which filters were used.',
  'Try blue and white striped shirts under 2000 rupees to show a multi-color request. One earlier live check found 10 matching records.',
@@ -305,14 +305,14 @@ table(['Technology','Simple purpose','Existing use in the catalog'],[
 ('Gradient boosting','Learns how input details relate to a number','HistGradientBoostingRegressor estimates missing USD prices from product features'),
 ('TF IDF','Turns words into numeric features','Represents product-title text for the earlier price model'),
 ('Encoders and imputers','Prepare categories and missing values','Process brand and other features before prediction'),
-('Joblib','Saves and reloads a Python model','Stores the price-model bundle in data/price_model.joblib'),
+('Joblib','Saves and reloads a Python model','Stores the price-model bundle in data/models/price_model.joblib'),
 ('Regular expressions','Find words and phrases in text','Extract fabric, fit and pocket clues; mine fit feedback from reviews'),
 ('JSONL and gzip','Store large records in compressed files','Original Amazon metadata and review dataset formats')],[1.6,2.3,3.1])
 h('Explain price estimation simply')
 p('Some products have a price in the original metadata. For missing prices, the earlier estimator learns from products with known prices and predicts a value using features such as title and brand. An estimated value remains labeled estimated; it does not become an actual current Amazon price.')
 h('Explain review features simply')
 p('Earlier scripts search product text and review phrases for clues such as cotton, regular fit, runs small or true to size. These saved attributes are available in the catalog. This is different from running a new review-language model during every search.')
-lead('Relevant files','03b_price_estimator_v2.py, 04_job_a_attributes.py, 06_job_c_review_mining.py and data/price_model.joblib.')
+lead('Relevant files','scripts/legacy/03b_price_estimator_v2.py, scripts/legacy/04_job_a_attributes.py, scripts/legacy/06_job_c_review_mining.py and data/models/price_model.joblib.')
 lead('Keep the distinction clear','Kaggle vision predicts shirt colors and patterns. The NVIDIA language model writes SQL. The earlier regression model estimates missing prices. Each model has a different job.')
 
 doc.save(OUT)

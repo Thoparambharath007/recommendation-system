@@ -1,0 +1,16 @@
+{
+  "products": 50224,
+  "size_labels_recorded": 8821,
+  "size_raw_evidence_only": 46,
+  "size_unavailable": 41357,
+  "brand_sources": {
+    "metadata_brand": 44973,
+    "details": 2871,
+    "store": 2291,
+    "unavailable": 89
+  },
+  "source": "C:\\Users\\thopa\\OneDrive\\Desktop\\project\\REAL SYSTEM\\data\\source_color_audit\\metadata_color_evidence.parquet",
+  "applied": true,
+  "note": "Size mentions and size charts are historical metadata evidence, not live variant availability.",
+  "backup": "C:\\Users\\thopa\\OneDrive\\Desktop\\project\\REAL SYSTEM\\DuckDB idea\\data\\backups\\shirts_master_before_details_a3f82d328962.parquet"
+}

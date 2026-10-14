@@ -85,14 +85,16 @@ def main():
         temp = path.with_suffix('.parquet.tmp')
         enriched.to_parquet(temp, index=False)
         pd.testing.assert_frame_equal(enriched, pd.read_parquet(temp))
-        csv_path = path.with_suffix('.csv')
+        export_dir = path.parent / 'exports'; export_dir.mkdir(exist_ok=True)
+        csv_path = export_dir / (path.stem + '.csv')
         csv_temp = csv_path.with_suffix('.csv.tmp')
         enriched.to_csv(csv_temp, index=False)
         temp.replace(path)
         csv_temp.replace(csv_path)
         report['backup'] = str(backup)
         report['original_sha256'] = digest
-        (path.parent / 'sleeve_enrichment_summary.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+        report_dir = path.parent / 'reports'; report_dir.mkdir(exist_ok=True)
+        (report_dir / 'sleeve_enrichment_summary.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
     (qa / 'summary.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
     print(json.dumps(report, indent=2))
 

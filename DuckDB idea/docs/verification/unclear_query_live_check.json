@@ -1,0 +1,19 @@
+{
+  "query": "Kollah",
+  "response": {
+    "sql": "",
+    "products": [],
+    "total_matches": 0,
+    "unsupported": [],
+    "mode": "clarification",
+    "explanation": "We couldn\u2019t understand that search. Describe a shirt, or choose a brand from the filters.",
+    "suggestions": [
+      "Comfortable white shirt for office",
+      "Black shirt under \u20b91,200",
+      "Blue cotton shirt size M"
+    ],
+    "selected_filters": {},
+    "elapsed_seconds": 2.435
+  },
+  "passed": true
+}

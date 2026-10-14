@@ -1,0 +1,178 @@
+[
+  {
+    "query": "comfortable black shirt for office",
+    "mode": "llm_sql",
+    "matches": 13537,
+    "preferences": {
+      "office": true,
+      "comfort": true
+    },
+    "sql": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|black|') AND TRUE",
+    "explanation": "Requested black shirt with plain pattern. Color filter matches 'black' token; pattern='plain' enforces solid color. No sorting applied per request. Ranked using office-style evidence and comfort wording and fabric/fit evidence from recorded listings; these are suitability signals, not guarantees.",
+    "elapsed_seconds": 3.857,
+    "products": [
+      {
+        "parent_asin": "B0C3QDDJ53",
+        "title": "Double Pump Mens Button Down Long Sleeve Shirts Regular Fit Dress Shirts Business Casual Plaid Shirts",
+        "color": "black|charcoal",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 2240.0,
+        "preference_score": 11
+      },
+      {
+        "parent_asin": "B07ZBSY1F3",
+        "title": "Tommy Hilfiger Men's Dress Shirt Regular Fit Non Iron Gingham",
+        "color": "grey|white|silver|black|charcoal",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 2718.0,
+        "preference_score": 11
+      },
+      {
+        "parent_asin": "B0976LFN7Y",
+        "title": "Damipow Mens Premium Casual Button Down Shirts Long Sleeve Regular Fit Men Shirt",
+        "color": "black|charcoal",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 2240.0,
+        "preference_score": 11
+      },
+      {
+        "parent_asin": "B0B5TCDY7K",
+        "title": "Esabel.C Mens Casual Button Down Shirts Rugular Fit Long Sleeve Fashion Shirts",
+        "color": "olive|charcoal|black|brown",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 2157.0,
+        "preference_score": 11
+      },
+      {
+        "parent_asin": "B0C8SR153H",
+        "title": "Men Dress Shirt Long Sleeves Business Casual Button-Down Shirt Regular Fit for Formal Shirts Classic with Pockets",
+        "color": "black|charcoal",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 1991.0,
+        "preference_score": 11
+      }
+    ]
+  },
+  {
+    "query": "a white shrt for officie work",
+    "mode": "llm_sql",
+    "matches": 18261,
+    "preferences": {
+      "office": true
+    },
+    "sql": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|white|')",
+    "explanation": "Matches shirts where color contains 'white'. Ranked using office-style evidence from recorded listings; these are suitability signals, not guarantees.",
+    "elapsed_seconds": 3.288,
+    "products": [
+      {
+        "parent_asin": "B08DJXYZP5",
+        "title": "Civilian Irish Grandfather Collarless Shirt, Cotton and Linen Long-Sleeve Traditional Irish Shirt",
+        "color": "beige|white|cream",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 3980.0,
+        "preference_score": 7
+      },
+      {
+        "parent_asin": "B00GY8GXSU",
+        "title": "Modena Men's Cutaway Collar French Cuff Dress Shirt",
+        "color": "silver|beige|white|grey",
+        "pattern": "plain",
+        "sleeve": "unknown",
+        "price_inr_est": 4897.0,
+        "preference_score": 7
+      },
+      {
+        "parent_asin": "B07ZBSY1F3",
+        "title": "Tommy Hilfiger Men's Dress Shirt Regular Fit Non Iron Gingham",
+        "color": "grey|white|silver|black|charcoal",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 2718.0,
+        "preference_score": 7
+      },
+      {
+        "parent_asin": "B081WV1463",
+        "title": "Red House Men's Nailhead Non-Iron Shirt",
+        "color": "silver|grey|white",
+        "pattern": "plain",
+        "sleeve": "unknown",
+        "price_inr_est": 3699.0,
+        "preference_score": 7
+      },
+      {
+        "parent_asin": "B01M7SGI4J",
+        "title": "Lacoste Men's Short Sleeve Button Down Oxford Solid Shirt Regular Fit",
+        "color": "white|light blue",
+        "pattern": "plain",
+        "sleeve": "half",
+        "price_inr_est": 7321.0,
+        "preference_score": 7
+      }
+    ]
+  },
+  {
+    "query": "comfortable plain black shirt full sleeve for office under 1500",
+    "mode": "llm_sql",
+    "matches": 14,
+    "preferences": {
+      "office": true,
+      "comfort": true
+    },
+    "sql": "SELECT parent_asin FROM shirts WHERE (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|black|') AND pattern IN ('plain') AND sleeve = 'full' AND price_inr_est < 1500) AND (LOWER(TRIM(COALESCE(color, ''))) = 'black' AND pattern = 'plain')",
+    "explanation": "Applied black color, plain pattern, full sleeve, and price filter under 1500 INR. Only products tagged solely black are included; mixed color tags are excluded. Ranked using office-style evidence and comfort wording and fabric/fit evidence from recorded listings; these are suitability signals, not guarantees.",
+    "elapsed_seconds": 3.4,
+    "products": [
+      {
+        "parent_asin": "B09RH1HVDS",
+        "title": "Porseme Mens Casual Shirts Linen Cotton Long Sleeve Botton Down Summer Beach Spread Collar Lightweight No Pocket Size XS-3XL",
+        "color": "black",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 829.0,
+        "preference_score": 8
+      },
+      {
+        "parent_asin": "B0B7RMYL69",
+        "title": "Aulemen Mens Casual Long Sleeve Button Down Shirts Cotton Line Plain Shirts Fashion Solid Color Dress Shirts",
+        "color": "black",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 829.0,
+        "preference_score": 11
+      },
+      {
+        "parent_asin": "B09Q91WYV3",
+        "title": "Porseme Mens Casual Shirts Linen Cotton Long Sleeve Botton Down Summer Beach Spread Collar Lightweight No Pocket Size XS-3XL",
+        "color": "black",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 848.0,
+        "preference_score": 8
+      },
+      {
+        "parent_asin": "B09Q91VMJ3",
+        "title": "Porseme Mens Casual Shirts Linen Cotton Long Sleeve Botton Down Summer Beach Spread Collar Lightweight No Pocket Size XS-3XL",
+        "color": "black",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 848.0,
+        "preference_score": 8
+      },
+      {
+        "parent_asin": "B09Q928JXC",
+        "title": "Porseme Mens Casual Shirts Linen Cotton Long Sleeve Botton Down Summer Beach Spread Collar Lightweight No Pocket Size XS-3XL",
+        "color": "black",
+        "pattern": "plain",
+        "sleeve": "full",
+        "price_inr_est": 848.0,
+        "preference_score": 8
+      }
+    ]
+  }
+]

@@ -1,4 +1,4 @@
-"""Run with Python, or double-click Start_Query_App.bat."""
+"""Run with Python, or double-click start.bat."""
 import os
 from pathlib import Path
 import sys

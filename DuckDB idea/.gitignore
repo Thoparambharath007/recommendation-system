@@ -2,3 +2,25 @@
 .vendor/
 __pycache__/
 tests/__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+~$*
+*.tmp
+*.log
+*.zip
+ppt/.qoder-office-pptx-locks/
+ppt/backups/
+
+# Active catalog files tracked in git
+!data/shirts_master.parquet
+!data/shirts_catalog.parquet
+!data/product_details.parquet
+!data/shirt_size_options.parquet
+!data/README.md
+!data/models/
+!data/models/**
+!data/reports/
+!data/reports/**
+
+

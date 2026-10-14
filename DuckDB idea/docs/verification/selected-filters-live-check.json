@@ -1,0 +1,75 @@
+{
+  "brand_count": 3171,
+  "checks": [
+    {
+      "request": {
+        "filters": {
+          "brands": [
+            "JMIERR"
+          ],
+          "size": "M"
+        },
+        "limit": 50
+      },
+      "matches": 31,
+      "mode": "catalog_filters",
+      "applied": {
+        "brands": [
+          "JMIERR"
+        ],
+        "size": "M"
+      },
+      "elapsed_seconds": 0.205
+    },
+    {
+      "request": {
+        "query": "shirts under 2000",
+        "filters": {
+          "brands": [
+            "JMIERR"
+          ],
+          "size": "M"
+        },
+        "limit": 50
+      },
+      "matches": 13,
+      "mode": "llm_sql",
+      "applied": {
+        "brands": [
+          "JMIERR"
+        ],
+        "size": "M"
+      },
+      "elapsed_seconds": 3.176
+    },
+    {
+      "request": {
+        "query": "plain pink shirt under 1200",
+        "filters": {},
+        "limit": 50
+      },
+      "matches": 5,
+      "mode": "llm_sql",
+      "applied": {},
+      "elapsed_seconds": 3.437
+    },
+    {
+      "request": {
+        "filters": {
+          "color": "black",
+          "pattern": "plain",
+          "max_price": 1500
+        },
+        "limit": 50
+      },
+      "matches": 20,
+      "mode": "catalog_filters",
+      "applied": {
+        "color": "black",
+        "pattern": "plain",
+        "max_price": 1500.0
+      },
+      "elapsed_seconds": 0.168
+    }
+  ]
+}

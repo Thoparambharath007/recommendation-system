@@ -1,0 +1,19 @@
+{
+  "products": 50224,
+  "changed": 163,
+  "before": {
+    "full": 23564,
+    "half": 14089,
+    "unknown": 12571
+  },
+  "after": {
+    "full": 23658,
+    "half": 14158,
+    "unknown": 12408
+  },
+  "metadata": "C:\\Users\\thopa\\OneDrive\\Desktop\\project\\REAL SYSTEM\\data\\processed\\men_shirts_metadata.parquet",
+  "applied": true,
+  "policy": "Only missing sleeves filled; explicit length or convertible-long-sleeve evidence; conflicting/silent text stays unknown.",
+  "backup": "C:\\Users\\thopa\\OneDrive\\Desktop\\project\\REAL SYSTEM\\DuckDB idea\\data\\backups\\shirts_master_before_sleeves_e409beb07a48.parquet",
+  "original_sha256": "e409beb07a48a8cdbf7ea2119da90adb25940df4ffc28bf4fabf08e695c7e2dd"
+}

@@ -1,0 +1,33 @@
+{
+  "raw_listing_rows": 50224,
+  "unique_image_groups": 31793,
+  "searchable_image_groups": 31707,
+  "query": "blue shirt with 2 pockets",
+  "total_groups": 33,
+  "returned_cards": 33,
+  "distinct_urls": 33,
+  "example_variants": [
+    {
+      "parent_asin": "B077XCBK65",
+      "sizes": "M",
+      "price_inr_est": 2239.0,
+      "image_url": "https://m.media-amazon.com/images/I/81XlUEqbd6L._AC_UL1500_.jpg"
+    },
+    {
+      "parent_asin": "B077XFD51P",
+      "sizes": "L",
+      "price_inr_est": 2393.0,
+      "image_url": "https://m.media-amazon.com/images/I/81XlUEqbd6L._AC_UL1500_.jpg"
+    }
+  ],
+  "first_selected": {
+    "sizes": "M",
+    "price": 2239.0,
+    "id": "B077XCBK65"
+  },
+  "second_selected": {
+    "sizes": "L",
+    "price": 2393.0,
+    "id": "B077XFD51P"
+  }
+}

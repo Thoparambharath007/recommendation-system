@@ -1,0 +1,224 @@
+{
+  "date": "2026-10-14",
+  "moves": [
+    {
+      "from": "01_first_query.py",
+      "to": "scripts\\legacy\\01_first_query.py",
+      "sha256": "7793BDE33AA501FC08D6896398B1AC2274738548C9FF4A4E2F78159EFEB17C3E"
+    },
+    {
+      "from": "02_build_asin_bridge.py",
+      "to": "scripts\\legacy\\02_build_asin_bridge.py",
+      "sha256": "414D9BBF8054698258946FA7724A78A7DEBD6E146F1C1CF76EF67F9FC447C7B5"
+    },
+    {
+      "from": "03_price_estimator.py",
+      "to": "scripts\\legacy\\03_price_estimator.py",
+      "sha256": "2870F0ED3468C61BF7B7276B8189485301FA50E90A03D6D551FD3B9714030D65"
+    },
+    {
+      "from": "03b_price_estimator_v2.py",
+      "to": "scripts\\legacy\\03b_price_estimator_v2.py",
+      "sha256": "A841DEF663EC160EE634AFD84F4873266DECD158EFE53A83A36400FEFD0DA668"
+    },
+    {
+      "from": "04_job_a_attributes.py",
+      "to": "scripts\\legacy\\04_job_a_attributes.py",
+      "sha256": "DC89E9C4A27DBF9BF8DC09C51A1592D6945F7A01CDFCA0FA86254BA0FC2DC116"
+    },
+    {
+      "from": "05_shirts_master.py",
+      "to": "scripts\\legacy\\05_shirts_master.py",
+      "sha256": "92C99B7CAA52D111877A77501D1E2A3F77CBB1047FDC473E24CDD45AEFAC0605"
+    },
+    {
+      "from": "06_job_c_review_mining.py",
+      "to": "scripts\\legacy\\06_job_c_review_mining.py",
+      "sha256": "5283CF84BB60EFEADD816F63745536F82EBF5DBC033309D8F7F5D02462DB77BF"
+    },
+    {
+      "from": "07_finalize_master.py",
+      "to": "scripts\\legacy\\07_finalize_master.py",
+      "sha256": "2F5771B938204CBFD98465A9F31BF7516AD2F71E62B27B211F30B23318826D83"
+    },
+    {
+      "from": "08_fill_pocket_color.py",
+      "to": "scripts\\legacy\\08_fill_pocket_color.py",
+      "sha256": "42949FCD5536AC0AC9423B04852AEFBCDD2D6AB44A01CF7EBD34AEB43CEDDA84"
+    },
+    {
+      "from": "08_job_d_style.py",
+      "to": "scripts\\legacy\\08_job_d_style.py",
+      "sha256": "3600D2DBE9A8E3A71E53AB48834A650FC1E3011BC8D257FB7E613D8C05BEF392"
+    },
+    {
+      "from": "check_live.py",
+      "to": "scripts\\check_live.py",
+      "sha256": "1C6537EC37F32571868BAA43C57C9F1E724B03F3CDEEDD48AEFDF22E69CB7D32"
+    },
+    {
+      "from": "data\\asin_bridge.csv",
+      "to": "data\\intermediate\\asin_bridge.csv",
+      "sha256": "9EB088D31D11FF20C3422452D3140FEF408EEE87D84287DC251019844B49FD68"
+    },
+    {
+      "from": "data\\asin_bridge.parquet",
+      "to": "data\\intermediate\\asin_bridge.parquet",
+      "sha256": "B6004ABA786BF3192162A70D64455521397D3A34357CC4FACA8CF6C0F379888D"
+    },
+    {
+      "from": "data\\cv_shirt_verification.csv",
+      "to": "data\\intermediate\\cv_shirt_verification.csv",
+      "sha256": "AA516C6CF7581A6C34F635CC6FCA1C56DC2018DF02AF6E8AFFECB29B2DF4F9EF"
+    },
+    {
+      "from": "data\\not_shirts_rejected.jsonl",
+      "to": "data\\intermediate\\not_shirts_rejected.jsonl",
+      "sha256": "FA8D919C5B6B903A3AC44FEADF6E3F92309A25167EC76E75E520E6A47ACB30A5"
+    },
+    {
+      "from": "data\\review_attributes.csv",
+      "to": "data\\intermediate\\review_attributes.csv",
+      "sha256": "5622467C9AACD9D1ABB4DCC81873585F7F3CE031DF3AD46D7D059EC29FA42D1A"
+    },
+    {
+      "from": "data\\review_attributes.parquet",
+      "to": "data\\intermediate\\review_attributes.parquet",
+      "sha256": "6BF5D3F45D1598E004C68498631B4E56B3A2EB136E92373A97CA3991BA5BF413"
+    },
+    {
+      "from": "data\\shirt_attributes.csv",
+      "to": "data\\intermediate\\shirt_attributes.csv",
+      "sha256": "C0F9A041729AC76DA37D25660FB649F481010C246D3485446DEA4E307EFE2AFE"
+    },
+    {
+      "from": "data\\shirt_attributes.parquet",
+      "to": "data\\intermediate\\shirt_attributes.parquet",
+      "sha256": "9C28275C918F7B51E5F7D43BB6ACDCE323C2D85EBC2DC4F29974A82A012F4308"
+    },
+    {
+      "from": "data\\shirts_final.parquet",
+      "to": "data\\intermediate\\shirts_final.parquet",
+      "sha256": "CE185BACCBE03A025FE1CC45073C36998E57F94B38D937EE28B723CA05922362"
+    },
+    {
+      "from": "data\\shirts_master.csv",
+      "to": "data\\intermediate\\shirts_master.csv",
+      "sha256": "963B88D440DECC4DEE5D7D984758B0A86A8B2FC0F47035AE3B11ADC95529E634"
+    },
+    {
+      "from": "data\\shirts_priced.csv",
+      "to": "data\\intermediate\\shirts_priced.csv",
+      "sha256": "EC13FFC38CD7F60B3E040327EC90382FDA27F70287B8718996BD881AFD35878E"
+    },
+    {
+      "from": "data\\shirts_priced.parquet",
+      "to": "data\\intermediate\\shirts_priced.parquet",
+      "sha256": "4F67BB6655DD438B7C631D929F5C3B0ABB77FFB1062C8ABFCE324EE3C9996F1B"
+    },
+    {
+      "from": "data\\style_attributes.csv",
+      "to": "data\\intermediate\\style_attributes.csv",
+      "sha256": "FE6C23A5B9EF7151F0681E7AF4E6A2329CA74D11DBB499DE5051762AB729F478"
+    },
+    {
+      "from": "data\\style_attributes.parquet",
+      "to": "data\\intermediate\\style_attributes.parquet",
+      "sha256": "1AB853D34CC9AABD03BC3B323F5199EA8900315A6BF47CF73703383E648ED0DC"
+    },
+    {
+      "from": "data\\price_model.joblib",
+      "to": "data\\models\\price_model.joblib",
+      "sha256": "D4AEA1BA787D591EBEFCB4391BFDCD0AFCD6516FEA09CA97D5A836C2DB35A406"
+    },
+    {
+      "from": "data\\missing_fields.md",
+      "to": "docs\\history\\missing_fields.md",
+      "sha256": "48FFBD100E60EE1FD935E594764D586834EB84CC85B9528123AAE5A6A8C84B8D"
+    },
+    {
+      "from": "HANDOFF.md",
+      "to": "docs\\history\\HANDOFF_2026-10-04.md",
+      "sha256": "DB315A80BD574AD90A5A9673B63C8C2E8827FC65FD75C8443C6E746F2BA87BF9"
+    },
+    {
+      "from": "docs\\implementation-plan.md",
+      "to": "docs\\history\\implementation-plan.md",
+      "sha256": "865107CEDF7F1E0DC4844163B2D8C7472C30D4D85DA93F25FCE93C1FC31F13D2"
+    },
+    {
+      "from": "docs\\format_IQAC.docx",
+      "to": "docs\\templates\\format_IQAC.docx",
+      "sha256": "86CA83D16CD8DF8082FE87C178A91025E663C61C4478DA55B6350926A7DF452C"
+    },
+    {
+      "from": "data\\product_enrichment_summary.json",
+      "to": "data\\reports\\product_enrichment_summary.json",
+      "sha256": "72D2C17BB2ABCC4D7FFC65297EAEE9E68B510B72A00CD3711940DB4AFEE5DFDD"
+    },
+    {
+      "from": "data\\sleeve_enrichment_summary.json",
+      "to": "data\\reports\\sleeve_enrichment_summary.json",
+      "sha256": "3999269FA431D9AC850D1B0D7CEEC4DB9BC0071E18FB511115D3550C8B6390A5"
+    },
+    {
+      "from": "data\\vision_merge_summary.json",
+      "to": "data\\reports\\vision_merge_summary.json",
+      "sha256": "EDC3703CD890B838C92DE72C6F0AF3BE3B15FC1368A89F484FB275CC306A0BF4"
+    },
+    {
+      "from": "docs\\live-provider-check.json",
+      "to": "docs\\verification\\live-provider-check.json",
+      "sha256": "B3E4A26E6E9A9DF47C9B4E6E13B0B8F8F22CFC7E96525C15B242ED0BC8AF71F1"
+    },
+    {
+      "from": "docs\\office-comfort-live-check.json",
+      "to": "docs\\verification\\office-comfort-live-check.json",
+      "sha256": "FD130B682AF4FD1AFBBD09D2ED5B3592BB50433A5C9955E312EBDD585CC24638"
+    },
+    {
+      "from": "docs\\product-details-live-check.json",
+      "to": "docs\\verification\\product-details-live-check.json",
+      "sha256": "4FBA898783D409546CD210780415C6B996B2BC1CD8D978C8B4979848A8861795"
+    },
+    {
+      "from": "docs\\selected-filters-live-check.json",
+      "to": "docs\\verification\\selected-filters-live-check.json",
+      "sha256": "61A00B8462A2C0AE8E8197B925FEE287F4E37690D4CC67AFCE9EE89B7C784BC1"
+    },
+    {
+      "from": "docs\\sleeve-search-check.json",
+      "to": "docs\\verification\\sleeve-search-check.json",
+      "sha256": "B85A06586BDC05DF44D7C62DB60B09FADE92741F4F1A4C54192A8AF86FC2CAD4"
+    },
+    {
+      "from": "docs\\verification.md",
+      "to": "docs\\verification\\README.md",
+      "sha256": "0E1A3337DE4113304C6229B74D2C81CDD0CC7D3D9BF8A1701A31B31D3B9C8E5B"
+    }
+  ],
+  "removed_generated_or_empty": [
+    "__pycache__",
+    ".vendor\\sqlglot\\__pycache__",
+    ".vendor\\sqlglot\\dialects\\__pycache__",
+    ".vendor\\sqlglot\\executor\\__pycache__",
+    ".vendor\\sqlglot\\expressions\\__pycache__",
+    ".vendor\\sqlglot\\generators\\__pycache__",
+    ".vendor\\sqlglot\\optimizer\\__pycache__",
+    ".vendor\\sqlglot\\parsers\\__pycache__",
+    ".vendor\\sqlglot\\typing\\__pycache__",
+    "tests\\__pycache__",
+    "notebook",
+    "sql",
+    "ppt\\.qoder-office-pptx-locks"
+  ],
+  "essential_files_unchanged": true,
+  "verification": {
+    "legacy_read_only_demo": "passed",
+    "python_sources_parsed": 29,
+    "tests_passed": 39,
+    "live_catalog_rows": 50224,
+    "preserved_moved_data_and_document_hashes": 24,
+    "note": "Move hashes describe bytes at relocation; Python and Markdown references were subsequently updated."
+  }
+}

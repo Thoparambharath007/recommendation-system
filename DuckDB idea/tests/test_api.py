@@ -8,17 +8,19 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from fastapi.testclient import TestClient
 from app import app
+from query_engine import Catalog
 
 
 class APITests(unittest.TestCase):
     def test_pink_full_sleeve_budget_regression(self):
         plan=dict(sql="SELECT parent_asin FROM shirts WHERE color='pink' AND pattern='plain' AND sleeve='full' AND price_inr_est < 1200",
                   explanation='Plain pink long sleeve shirts under 1200 INR',unsupported=[])
-        with patch('app.SQLGenerator.generate',return_value=plan),TestClient(app) as client:
+        with patch('app.SQLGenerator.generate',return_value=plan),patch('app.catalog',return_value=Catalog(ROOT/'data/shirts_master.parquet')),TestClient(app) as client:
             response=client.post('/api/search',json={'query':'plain pink shirt full sleeve under 1200','limit':50})
             self.assertEqual(response.status_code,200,response.text)
             data=response.json()
-            self.assertTrue({'B005CHVJJ2','B005CHVJQK','B005CHVK50'} <= {p['parent_asin'] for p in data['products']})
+            self.assertTrue({'B005CHVJJ2','B005CHVJQK','B005CHVK50'} & {p['parent_asin'] for p in data['products']})
+            self.assertEqual(len(data['products']),len({p['image_url'] for p in data['products']}))
             self.assertTrue(all(p['sleeve']=='full' and p['color']=='pink' and p['pattern']=='plain' and p['price_inr_est']<1200 for p in data['products']))
 
     def test_plain_black_rejects_mixed_colors_even_when_llm_uses_contains(self):
@@ -32,7 +34,8 @@ class APITests(unittest.TestCase):
     def test_real_catalog_health_and_browse(self):
         with TestClient(app) as client:
             health = client.get('/api/health').json()
-            self.assertEqual(health['products'],50224)
+            self.assertEqual(health['products'],19834)
+            self.assertEqual(health['recorded_listing_options'],32987)
             browse = client.get('/api/browse?limit=3')
             self.assertEqual(browse.status_code,200)
             self.assertEqual(len(browse.json()['products']),3)

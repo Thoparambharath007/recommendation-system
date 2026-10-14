@@ -1,0 +1,56 @@
+{
+  "model": "qwen/qwen3.8-max:free",
+  "provider": "xkiro",
+  "tests": [
+    {
+      "query": "a comfortable white shirt for office use",
+      "query_sent": "a white shirt use",
+      "preferences": {
+        "office": true,
+        "comfort": true
+      },
+      "plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|', '|white|')",
+        "explanation": "Filters for shirts that include white in their color list.",
+        "sort": "lowest_price",
+        "unsupported": []
+      },
+      "matches": 10883,
+      "sql_executed": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|white|')",
+      "elapsed_seconds": 7.02
+    },
+    {
+      "query": "comfortable black shirt for office under 1200 rupees",
+      "query_sent": "black shirt under 1200 rupees",
+      "preferences": {
+        "office": true,
+        "comfort": true
+      },
+      "plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|', '|black|') AND price_inr_est < 1200",
+        "explanation": "Filters for black shirts with an estimated price under 1200 INR; currency defaults to INR as rupees were specified.",
+        "sort": "lowest_price",
+        "unsupported": []
+      },
+      "matches": 242,
+      "sql_executed": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|black|') AND price_inr_est < 1200",
+      "elapsed_seconds": 6.77
+    },
+    {
+      "query": "comfortable blue cotton shirt size M under 1500 rupees",
+      "query_sent": "blue cotton shirt size M under 1500 rupees",
+      "preferences": {
+        "comfort": true
+      },
+      "plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|','|blue|') AND contains('|' || lower(coalesce(fabric,'')) || '|','|cotton|') AND contains('|' || lower(coalesce(sizes,'')) || '|','|m|') AND price_inr_est < 1500",
+        "explanation": "Filters for blue cotton shirts in size M under 1500 INR (rupees defaulted to INR).",
+        "sort": "lowest_price",
+        "unsupported": []
+      },
+      "matches": 0,
+      "sql_executed": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|blue|') AND CONTAINS('|' || LOWER(COALESCE(fabric, '')) || '|', '|cotton|') AND CONTAINS('|' || LOWER(COALESCE(sizes, '')) || '|', '|m|') AND price_inr_est < 1500",
+      "elapsed_seconds": 5.99
+    }
+  ]
+}

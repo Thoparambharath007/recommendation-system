@@ -1,0 +1,40 @@
+[
+  {
+    "product": "B0B3W59XLJ",
+    "sizes": "S|M|L|XL|XXL",
+    "brand": "JMIERR",
+    "feature_count": 9,
+    "description_count": 0,
+    "listing_images": 18
+  },
+  {
+    "product": "B00QB3C9OU",
+    "sizes": "XL",
+    "brand": "Columbia",
+    "feature_count": 4,
+    "description_count": 1,
+    "listing_images": 2
+  },
+  {
+    "product": "B005CHVJJ2",
+    "sizes": "",
+    "brand": "Edelnice Trachtenmoden",
+    "feature_count": 5,
+    "description_count": 1,
+    "listing_images": 9
+  },
+  {
+    "query": "plain white shirt size M under 2000",
+    "matches": 12,
+    "sql": "SELECT parent_asin FROM shirts WHERE (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|white|') AND pattern IN ('plain') AND CONTAINS('|' || LOWER(COALESCE(sizes, '')) || '|', '|m|') AND price_inr_est < 2000) AND (LOWER(TRIM(COALESCE(color, ''))) = 'white' AND pattern = 'plain')",
+    "returned": 12,
+    "elapsed_seconds": 3.154
+  },
+  {
+    "query": "shirt size XXL under 1500",
+    "matches": 278,
+    "sql": "SELECT parent_asin FROM shirts WHERE CONTAINS('|' || LOWER(COALESCE(sizes, '')) || '|', '|xxl|') AND price_inr_est < 1500",
+    "returned": 12,
+    "elapsed_seconds": 2.651
+  }
+]

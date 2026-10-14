@@ -92,7 +92,7 @@ class SQLTests(unittest.TestCase):
     def test_search_on_parquet_ranks_without_merging_shades(self):
         with tempfile.TemporaryDirectory(dir=ROOT.parent / 'JUNK created by qoder') as d:
             p = Path(d) / 'catalog.parquet'
-            pd.DataFrame([dict(parent_asin=x, title=x, image_url='https://example.com/a',
+            pd.DataFrame([dict(parent_asin=x, title=x, image_url='https://example.com/'+x,
                 color=color, pattern='plain', store='Example', sleeve='full', fabric='cotton',
                 fit_type='regular fit', pocket='single', price_usd=10., price_inr_est=830.,
                 price_source='exact', average_rating=rating, rating_number=n, review_count=n,

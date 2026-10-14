@@ -1,0 +1,27 @@
+{
+  "archive": "garment_results_v2_backup.zip",
+  "coverage_complete": true,
+  "master_columns_unchanged": true,
+  "catalog_rows": 50224,
+  "unique_urls": 31793,
+  "status_counts": {
+    "download_failed": {
+      "listings": 3,
+      "unique_urls": 3
+    },
+    "non_shirt_candidate": {
+      "listings": 1210,
+      "unique_urls": 816
+    },
+    "shirt_candidate": {
+      "listings": 32987,
+      "unique_urls": 19834
+    },
+    "uncertain": {
+      "listings": 16024,
+      "unique_urls": 11147
+    }
+  },
+  "elapsed_minutes": 43.73817870521666,
+  "note": "Classification candidates are not verified ground truth. Unique URL counts per status overlap when titles differ for the same photo."
+}

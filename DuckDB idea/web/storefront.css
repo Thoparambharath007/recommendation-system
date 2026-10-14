@@ -1,0 +1,41 @@
+/* A quieter storefront, with the existing search and filter controls. */
+:root{--paper:#f8f9f6;--line:#e4e8e1;--muted:#697269;--green:#244d39}
+header{box-shadow:0 1px 8px #17291f04}
+nav{padding-top:18px;padding-bottom:18px}
+.brand{font-size:24px;letter-spacing:-1px}
+.pill{background:transparent;color:var(--muted);padding:0;font-size:12px}
+.hero{margin:32px 0 24px;max-width:780px}
+.hero h1{font-weight:750;font-size:clamp(32px,4.2vw,48px);letter-spacing:-1.8px}
+.hero p{margin:12px 0;font-size:16px}
+.eyebrow{font-size:10px;letter-spacing:1.8px}
+#search{border-radius:12px;box-shadow:0 4px 16px #17291f05}
+#submit{padding:12px 25px}
+.examples{margin-bottom:22px;gap:8px}
+.examples button{background:#fff;border:1px solid var(--line);border-radius:25px;color:#536453}
+.examples button:hover{border-color:var(--green);color:var(--green)}
+.filter-panel{box-shadow:none;border-radius:12px}
+.filter-top strong{font-size:14px}
+.options{margin-top:18px;font-size:12px}
+.info{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin:30px 0 18px}
+.info h2{font-size:21px;letter-spacing:-.5px}
+.info p{font-size:13px;margin:0}
+.info>.examples{flex-basis:100%;margin:10px 0}
+.grid{gap:20px}
+.card{display:flex;flex-direction:column;border-radius:14px;transition:box-shadow .18s,border-color .18s}
+.card:hover{border-color:#bdcabe;box-shadow:0 7px 24px #17291f09}
+.photo{height:280px;padding:20px}
+.body{display:flex;flex-direction:column;flex:1;padding:18px;border-top:1px solid #f3f5ef}
+.title{margin-bottom:12px;font-size:14px;line-height:1.5}
+.store{font-size:10px;letter-spacing:1px;color:#728070}
+.price{font-size:22px;letter-spacing:-.5px}
+.price small{letter-spacing:0;margin-left:4px}
+.tags{margin:10px 0;gap:6px}.tag{background:#f2f4ee;color:#5c695b;border-radius:4px}
+.badge{font-size:10px;background:#faf1e2;margin-bottom:8px;align-self:flex-start}
+.details-button{margin-top:auto;padding-top:12px;text-decoration:none;font-weight:600;font-size:12px}
+footer{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding-top:24px}
+.footer-brand{font-size:14px;font-weight:700;color:var(--ink)}
+.footer-brand span{display:block;font-size:12px;font-weight:400;color:var(--muted);margin-top:4px}
+footer details{margin:0;max-width:420px;font-size:12px}footer p{font-size:12px}
+@media(max-width:750px){.photo{height:235px}.grid{gap:14px}.body{padding:14px}.pill{max-width:140px}.hero{margin-top:22px}}
+@media(max-width:450px){.photo{height:300px}footer{flex-direction:column}.info{display:block}.info p{margin-top:6px}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}}

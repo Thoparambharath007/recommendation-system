@@ -1,0 +1,6 @@
+# Install into the notebook's isolated target with --no-deps.
+# Reuse Kaggle's torch, torchvision, pandas, pyarrow, Pillow and requests.
+transformers==4.57.6
+huggingface-hub==0.36.2
+tokenizers==0.22.1
+safetensors==0.7.0

@@ -1,50 +1,91 @@
-# DuckDB Idea — the query layer HQ
+# SmartShirts
 
-## Current application (2026-10-13)
+Search a 50,224-product shirt catalog using natural language and optional filters.
+The app translates required constraints into validated SQL, runs DuckDB over
+Parquet, and ranks matches. Office and comfort wording are ranking preferences.
+Results show one card per image URL, with recorded size/listing choices in the
+details dialog. The 50,224 underlying listings are retained across 31,793 image
+groups so size-specific evidence and prices are not lost.
 
-The master now contains the completed Kaggle v3.2 color/pattern predictions for all
-50,224 product IDs, with uncertainty and original-attribute provenance preserved.
-49,658 products have nonempty colors; 41,752 have known patterns. The original
-pre-merge Parquet is preserved in `data/backups`.
+## Start the app
 
-Double-click `Start_Query_App.bat` and open http://127.0.0.1:8010.
-The app implements natural language -> LLM-generated SQL -> validation -> DuckDB
-on `data/shirts_master.parquet` -> ranked product cards. `.env` is prepared for
-NVIDIA's hosted Nemotron 3.5 Lightning model. Live SQL generation has been tested
-against the merged catalog; the API key is stored in the ignored local `.env`.
-See [QUERY_APP.md](QUERY_APP.md) for configuration, restrictions, ranking and tests.
+Double-click **start.bat**, then use http://127.0.0.1:8010/.
+Keep the server window open. An already-running server is reused.
+The private `.env` holds API settings; `.env.example` is the public template.
+See [QUERY_APP.md](QUERY_APP.md) for configuration, query rules and limitations.
 
-The historical notes below describe the earlier dataset-building stage.
+## Folder guide
 
-**Purpose:** build the proposed solution: SQL directly on the vision-verified
-shirt catalog (parquet, no server), later wrapped by an LLM text-to-SQL layer.
+| Location | Contents |
+|---|---|
+| Root Python files | Live API, SQL generation/validation, ranking, startup and current maintenance modules |
+| `web/` | Website HTML, JavaScript and CSS |
+| `data/shirts_master.parquet` | Current enriched catalog |
+| `data/product_details.parquet` | Original listing details and images |
+| `data/models/` | Saved price-estimation model |
+| `data/reports/` | Color/pattern, size/brand and sleeve enrichment summaries |
+| `data/intermediate/` | Earlier build datasets, historical CSV exports and screening evidence |
+| `data/exports/` | Fresh CSV exports, created when current maintenance scripts run |
+| `data/backups/` | Recovery copies from before catalog enrichment |
+| `scripts/check_live.py` | Optional real-provider smoke check |
+| `scripts/legacy/` | Original numbered dataset-building scripts |
+| `scripts/garment_verification/` | Dima806 Kaggle notebook, upload ZIP, varied sample and resume tools |
+| `tests/` | Automated API, SQL, enrichment and ranking checks |
+| `docs/srs/` | SRS Word/PDF, diagrams and generation sources |
+| `docs/templates/` | Original college document template |
+| `docs/verification/` | Verification notes and recorded live searches |
+| `docs/history/` | Earlier plans, handoff and folder guide |
+| `docs/Shirt_Recommendation_Project_Team_Guide.docx` | Simple guide for the five members |
+| `ppt/` | Current presentation, original template and recovery backups |
+| `.vendor/` | Local runtime dependency, retained for the app |
 
-## House rules (agreed 2026-10-04)
-1. ALL new work happens inside this folder.
-2. Verification/scratch outputs go to `..\JUNK created by qoder\` and are
-   referenced from here — never litter this folder.
-3. `data\` copies are working replicas; the canonical archive stays in
-   `..\segregation\verified\`.
+## Development and maintenance
 
-## Layout
+Run commands from this folder:
+
+```powershell
+python launch.py
+python -m unittest discover -s tests -v
+python scripts/check_live.py
 ```
-DuckDB idea\
-├── data\        shirts_final.parquet (50,224 verified) + rejects + CV ledger
-├── sql\         saved .sql queries (reusable, citable in the SRS)
-├── notebook\    exploration notebooks (later)
-└── 01_first_query.py   smoke test: DuckDB on the parquet
-```
 
-## The catalog being queried
-50,224 men's shirts, each confirmed by CLIP ViT-B/32 (shirt_prob >= 0.5)
-from 63,190 rule-segregated candidates out of 7.2M Amazon metadata records.
-Columns: shirt_id, parent_asin, title, store, price, average_rating,
-rating_number, sleeve, confidence, signals, categories_path, image_url,
-+ vision verdict columns (shirt_prob, vision_class, vision_sleeve, ...).
+Current maintenance modules are `merge_vision.py`, `enrich_sleeves.py`, and
+`product_enrichment.py`. They preserve backups before applying catalog changes.
+Sleeve/size enrichment reads original evidence from the parent project's `data/`.
+Kaggle scripts and source archives are also outside this app folder. Copying this
+folder alone does not include all rebuild inputs.
 
-## Next milestones
-- [x] DuckDB running directly on shirts_final.parquet
-- [ ] reviews_v2 (verified-purchase filter) -> shirts_master.parquet
-- [ ] sentiment join: ORDER BY rating*0.5 + sentiment*0.5
-- [ ] LLM -> SQL natural-language layer
-- [ ] eval metrics (Recall@10, NDCG@10, MRR)
+Legacy jobs write older build outputs into `data/intermediate/`. Do not replace
+the enriched live master with these outputs without the later enrichment stages.
+`data/intermediate/shirts_master.csv` is historical and may differ from the current
+Parquet. The app always reads the live Parquet files listed above.
+
+## Limits
+
+Color and pattern predictions can be wrong. Sizes are recorded listing mentions,
+not live stock. Prices are historical or labeled estimates. Missing attributes
+remain unknown; requested filters are not silently relaxed.
+
+The 2026-10-14 cleanup removed generated caches and empty placeholders and grouped
+files by purpose. Data, API settings, SRS and presentation contents were preserved.
+[Cleanup manifest](docs/cleanup_manifest.json) records moves and removed folders.
+# Active compact shirt catalog
+
+The app now uses `data/shirts_catalog.parquet`: 19,834 shirt-candidate records,
+one per image URL. `data/shirt_size_options.parquet` separately retains recorded
+size/listing IDs, prices and other listing-specific fields. Filtering operates
+on these options before one card per photo is selected, so size and price cannot
+be matched from different options.
+
+**`data/shirts_master.parquet` is preserved unchanged** with all 50,224 original
+listings. Uncertain and non-shirt classifier results remain in the source result
+archive; they are not part of the active compact catalog. Rebuild the compact
+files with `python scripts/build_compact_catalog.py`, which checks source ID/data
+alignment and the original master's hash before and after writing new files.
+
+Click a product photo to open `/product/<parent_asin>` in a new tab. Its recorded
+size buttons load the associated listing's information and price while retaining
+the same primary photo. Missing sizes are shown as unavailable, never invented.
+These image groups and size mentions are historical evidence, not confirmed
+live Amazon variant families or stock. The classification remains model output.
+

@@ -1,0 +1,18 @@
+{
+  "products": 50224,
+  "matched_ids": 50224,
+  "nonempty_color": 49658,
+  "known_pattern": 41752,
+  "vision_status_counts": {
+    "ok": 27411,
+    "needs_review": 22253,
+    "mask_failed": 433,
+    "multiple_shirts": 92,
+    "shirt_not_detected": 35
+  },
+  "backup": "C:\\Users\\thopa\\OneDrive\\Desktop\\project\\REAL SYSTEM\\DuckDB idea\\data\\backups\\shirts_master_before_vision_d039c0f679c6.parquet",
+  "original_sha256": "d039c0f679c698659c829cdf0cab29ec1d9e1327632f5a2ac5265bde86a02ae9",
+  "master_sha256": "e409beb07a48a8cdbf7ea2119da90adb25940df4ffc28bf4fabf08e695c7e2dd",
+  "source_archive": "C:\\Users\\thopa\\OneDrive\\Desktop\\project\\REAL SYSTEM\\shirt_results_backup final.zip",
+  "policy": "Include needs_review predictions with provenance; failed masks stay unknown."
+}

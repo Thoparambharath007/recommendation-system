@@ -1,0 +1,75 @@
+{
+  "source_backup": "garment_verification/garment_results_backup.zip",
+  "old_sample": {
+    "processed": 300,
+    "uncertain": 300
+  },
+  "diagnosis": "Weak logits reproduced locally with saved preprocessing. No definitive underlying cause established; do not lower gates to force acceptance. Model lacks bodysuit class.",
+  "replacement": "Marqo/marqo-fashionSigLIP",
+  "local_cpu_examples": [
+    {
+      "parent_asin": "B076PQFJRG",
+      "title": "Eagle Studio 1735 Mens Dress Shirt Combo Plaid Tie Reg Fit",
+      "garment_type": "Shirt",
+      "garment_score": 0.9889244437217712,
+      "garment_margin": 0.9846721291542053,
+      "garment_status": "shirt_candidate"
+    },
+    {
+      "parent_asin": "B00ZZ4D8H8",
+      "title": "Berlioni Men's Green Solid Dress Shirt",
+      "garment_type": "Shirt",
+      "garment_score": 0.9811317920684814,
+      "garment_margin": 0.9671862721443176,
+      "garment_status": "shirt_candidate"
+    },
+    {
+      "parent_asin": "B09ZJ5QKQN",
+      "title": "Paul Fredrick Men's Classic Fit Non-Iron Cotton Stripe Dress Shirt",
+      "garment_type": "Shirt",
+      "garment_score": 0.994223415851593,
+      "garment_margin": 0.9899622797966003,
+      "garment_status": "shirt_candidate"
+    },
+    {
+      "parent_asin": "B07T3G62SP",
+      "title": "LINCINK Hawaiian Shirt Mens Coconut Tree Casual Button Down Short Sleeve Shirts Camp Party Holiday Beach White",
+      "garment_type": "Polo",
+      "garment_score": 0.5839135646820068,
+      "garment_margin": 0.1953042447566986,
+      "garment_status": "uncertain"
+    },
+    {
+      "parent_asin": "B08PKKWTGR",
+      "title": "QinCiao Men's Short Sleeve Button Up Shirt Button Down Shirts Bodysuit Slim Fit Dress Shirt Leotard",
+      "garment_type": "Bodysuit",
+      "garment_score": 0.9569185376167297,
+      "garment_margin": 0.9219765663146973,
+      "garment_status": "non_shirt_candidate"
+    },
+    {
+      "parent_asin": "B07D3SC14Q",
+      "title": "iiniim Men's Long Sleeve Zipper Front Romper Shirt One-Piece Bowtie Leotard Bodysuit",
+      "garment_type": "Bodysuit",
+      "garment_score": 0.9982596039772034,
+      "garment_margin": 0.997296929359436,
+      "garment_status": "non_shirt_candidate"
+    },
+    {
+      "parent_asin": "B0BJFDV3CG",
+      "title": "Jackets for Men,Men Casual Blazer Jackets Slim Fit Suits Jacket One Button Business Sports Coat Solid Long Sleeve Shirts",
+      "garment_type": "Blazer",
+      "garment_score": 0.9954458475112915,
+      "garment_margin": 0.9919963479042053,
+      "garment_status": "non_shirt_candidate"
+    }
+  ],
+  "limits": "Seven selected examples verify execution and specific cases, not full-catalog accuracy. Kaggle T4 speed unmeasured for v2.",
+  "title_audit": {
+    "products_checked": 50224,
+    "excluded_title_listings": 173,
+    "one_piece_listings": 44,
+    "master_sha256": "3a41efdc62725298064ec76ace0e361748b98ab5b14384be368641048fef1bf5",
+    "source_unchanged": true
+  }
+}

@@ -1,0 +1,649 @@
+{
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+  "schema_sent": {
+    "products": 50224,
+    "colors_available": 49658,
+    "patterns_available": 41752,
+    "searchable_products": 50051,
+    "unique_image_products": 31793,
+    "searchable_image_products": 31673,
+    "excluded_non_shirt_products": 173,
+    "vocabulary": {
+      "pattern": [
+        "camouflage",
+        "checked_plaid",
+        "color_block",
+        "diagonal_stripes",
+        "floral",
+        "graphic_print",
+        "horizontal_stripes",
+        "other",
+        "plain",
+        "polka_dot",
+        "unknown",
+        "vertical_stripes"
+      ],
+      "sleeve": [
+        "full",
+        "half",
+        "unknown"
+      ],
+      "pocket": [
+        "double",
+        "no",
+        "single",
+        "unknown"
+      ],
+      "vision_status": [
+        "mask_failed",
+        "multiple_shirts",
+        "needs_review",
+        "ok",
+        "shirt_not_detected"
+      ],
+      "color": [
+        "beige",
+        "black",
+        "blue",
+        "brown",
+        "burgundy",
+        "charcoal",
+        "coral",
+        "cream",
+        "dark green",
+        "denim",
+        "gold",
+        "green",
+        "grey",
+        "hot pink",
+        "indigo",
+        "khaki",
+        "lavender",
+        "light blue",
+        "lime",
+        "maroon",
+        "mint",
+        "mustard",
+        "navy",
+        "olive",
+        "orange",
+        "peach",
+        "pink",
+        "plum",
+        "purple",
+        "red",
+        "rust",
+        "sage",
+        "silver",
+        "tan",
+        "teal",
+        "turquoise",
+        "white",
+        "yellow"
+      ],
+      "sizes": [
+        "3XL",
+        "3XL Tall",
+        "4XL",
+        "4XL Tall",
+        "5XL",
+        "6XL",
+        "6XL Tall",
+        "7XL",
+        "8XL",
+        "L",
+        "L Tall",
+        "M",
+        "M Tall",
+        "One Size",
+        "S",
+        "S Tall",
+        "XL",
+        "XL Tall",
+        "XS",
+        "XXL",
+        "XXL Tall",
+        "XXS"
+      ]
+    },
+    "columns": [
+      {
+        "name": "parent_asin",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "title",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "store",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "sleeve",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "style",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "average_rating",
+        "type": "DOUBLE"
+      },
+      {
+        "name": "rating_number",
+        "type": "BIGINT"
+      },
+      {
+        "name": "price_usd",
+        "type": "DOUBLE"
+      },
+      {
+        "name": "price_source",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "price_inr_est",
+        "type": "DOUBLE"
+      },
+      {
+        "name": "color",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "pattern",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "fabric",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "fit_type",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "fit_review_n",
+        "type": "INTEGER"
+      },
+      {
+        "name": "pocket",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "fit_feedback",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "review_count",
+        "type": "INTEGER"
+      },
+      {
+        "name": "vision_status",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "color_main",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "color_status",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "sizes",
+        "type": "VARCHAR"
+      },
+      {
+        "name": "brand",
+        "type": "VARCHAR"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "user_query": "a comfortable white shirt for office use",
+      "query_sent_to_model": "a white shirt use",
+      "raw_generated_plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|','|white|')",
+        "explanation": "Interpreted color white as an exact token filter.",
+        "sort": "recommended",
+        "unsupported": []
+      },
+      "http_status": 200,
+      "executed_sql": "SELECT parent_asin FROM shirts WHERE TRUE AND (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|white|'))",
+      "preferences": {
+        "office": true,
+        "comfort": true
+      },
+      "total_matches": 3438,
+      "explanation": "Interpreted color white as an exact token filter. White must be the largest shade and cover at least 50% of saved shirt pixels; small accents and shadows do not qualify. Ranked using office-style evidence and comfort wording and fabric/fit evidence from recorded listings; these are suitability signals, not guarantees.",
+      "ranking_note": null,
+      "unsupported": [],
+      "enforced_fields": [
+        "color"
+      ],
+      "sort": "recommended",
+      "ranking": "Predominant requested shade required (at least 50% of saved shirt pixels); stronger color share ranks first. Office/comfort listing evidence first, then price provenance and Bayesian rating. Preferences do not exclude matches. Exact-price tier first; within each tier, Bayesian average rating with a 20-review prior.",
+      "top_products": [
+        {
+          "parent_asin": "B07QZ2J6DG",
+          "title": "Perry Ellis Men's Solid Knit Oxford Short Sleeve Shirt",
+          "color": "white",
+          "color_main": "white",
+          "sleeve": "half",
+          "fabric": "oxford",
+          "fit_type": "regular fit",
+          "style": null,
+          "price_inr_est": 2614.0,
+          "preference_score": 11
+        },
+        {
+          "parent_asin": "B07F1ZLZVP",
+          "title": "Chaps Men's Dress Shirts Regular Fit Stretch Buttondown Collar Solid",
+          "color": "white",
+          "color_main": "white",
+          "sleeve": "full",
+          "fabric": "cotton",
+          "fit_type": "regular fit",
+          "style": null,
+          "price_inr_est": 3753.0,
+          "preference_score": 11
+        },
+        {
+          "parent_asin": "B07991TMQR",
+          "title": "Meraki Men's Oxford Casual Short Sleeve Shirt",
+          "color": "white",
+          "color_main": "white",
+          "sleeve": "half",
+          "fabric": "denim",
+          "fit_type": "regular fit",
+          "style": null,
+          "price_inr_est": 1726.0,
+          "preference_score": 11
+        }
+      ]
+    },
+    {
+      "user_query": "comfortable black shirt for office under 1200 rupees",
+      "query_sent_to_model": "black shirt under 1200 rupees",
+      "raw_generated_plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|','|black|') AND price_inr_est < 1200",
+        "explanation": "Filter for exact black color and INR budget under 1200.",
+        "sort": "recommended",
+        "unsupported": []
+      },
+      "http_status": 200,
+      "executed_sql": "SELECT parent_asin FROM shirts WHERE (TRUE AND TRUE) AND (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|black|')) AND (TRUE AND price_inr_est < 1200)",
+      "preferences": {
+        "office": true,
+        "comfort": true
+      },
+      "total_matches": 73,
+      "explanation": "Filter for exact black color and INR budget under 1200. Black must be the largest shade and cover at least 50% of saved shirt pixels; small accents and shadows do not qualify. Ranked using office-style evidence and comfort wording and fabric/fit evidence from recorded listings; these are suitability signals, not guarantees.",
+      "ranking_note": null,
+      "unsupported": [],
+      "enforced_fields": [
+        "color",
+        "price_inr_est"
+      ],
+      "sort": "recommended",
+      "ranking": "Predominant requested shade required (at least 50% of saved shirt pixels); stronger color share ranks first. Office/comfort listing evidence first, then price provenance and Bayesian rating. Preferences do not exclude matches. Exact-price tier first; within each tier, Bayesian average rating with a 20-review prior.",
+      "top_products": [
+        {
+          "parent_asin": "B09YLY9GQB",
+          "title": "Niitawm Men's Long Sleeve Button Down Shirts Cotton Tencel Solid Color Button Up Shirts",
+          "color": "black|charcoal",
+          "color_main": "black",
+          "sleeve": "full",
+          "fabric": "cotton",
+          "fit_type": "regular fit",
+          "style": null,
+          "price_inr_est": 995.0,
+          "preference_score": 11
+        },
+        {
+          "parent_asin": "B0B7JHQWZF",
+          "title": "Angbater Men's Dress Shirts Long Sleeve Turn Down Collar Striped Regular Fit Casual Button Down Shirt Black",
+          "color": "black|charcoal",
+          "color_main": "black",
+          "sleeve": "full",
+          "fabric": "polyester",
+          "fit_type": "slim fit",
+          "style": null,
+          "price_inr_est": 1161.0,
+          "preference_score": 11
+        },
+        {
+          "parent_asin": "B0B7RMYL69",
+          "title": "Aulemen Mens Casual Long Sleeve Button Down Shirts Cotton Line Plain Shirts Fashion Solid Color Dress Shirts",
+          "color": "black",
+          "color_main": "black",
+          "sleeve": "full",
+          "fabric": "cotton",
+          "fit_type": "loose fit",
+          "style": null,
+          "price_inr_est": 829.0,
+          "preference_score": 11
+        }
+      ]
+    },
+    {
+      "user_query": "a white shirt for office work full sleeve",
+      "query_sent_to_model": "a white shirt full sleeve",
+      "raw_generated_plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|','|white|') AND sleeve = 'full'",
+        "explanation": "Requested white shirt with full sleeve color and sleeve filter applied.",
+        "sort": "recommended",
+        "unsupported": []
+      },
+      "http_status": 200,
+      "executed_sql": "SELECT parent_asin FROM shirts WHERE (TRUE AND TRUE) AND (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|white|')) AND (sleeve = 'full')",
+      "preferences": {
+        "office": true
+      },
+      "total_matches": 1544,
+      "explanation": "Requested white shirt with full sleeve color and sleeve filter applied. White must be the largest shade and cover at least 50% of saved shirt pixels; small accents and shadows do not qualify. Ranked using office-style evidence from recorded listings; these are suitability signals, not guarantees.",
+      "ranking_note": null,
+      "unsupported": [],
+      "enforced_fields": [
+        "color",
+        "sleeve"
+      ],
+      "sort": "recommended",
+      "ranking": "Predominant requested shade required (at least 50% of saved shirt pixels); stronger color share ranks first. Office/comfort listing evidence first, then price provenance and Bayesian rating. Preferences do not exclude matches. Exact-price tier first; within each tier, Bayesian average rating with a 20-review prior.",
+      "top_products": [
+        {
+          "parent_asin": "B07DPJ6V73",
+          "title": "J.Crew Factory Men's Slim Fit Oxford Cotton Shirt",
+          "color": "white",
+          "color_main": "white",
+          "sleeve": "full",
+          "fabric": "oxford",
+          "fit_type": "slim fit",
+          "style": null,
+          "price_inr_est": 3477.0,
+          "preference_score": 7
+        },
+        {
+          "parent_asin": "B016IXRFSW",
+          "title": "Urban Boundaries Mens Button Down Point Collar Black White Dress Shirts",
+          "color": "white",
+          "color_main": "white",
+          "sleeve": "full",
+          "fabric": "polyester",
+          "fit_type": "slim fit",
+          "style": null,
+          "price_inr_est": 2422.0,
+          "preference_score": 7
+        },
+        {
+          "parent_asin": "B07G2RVV3B",
+          "title": "Amazon Brand - Goodthreads Men's \"The Perfect Oxford Shirt\" Slim-Fit Long-Sleeve Solid Shirt",
+          "color": "white",
+          "color_main": "white",
+          "sleeve": "full",
+          "fabric": "oxford",
+          "fit_type": "slim fit",
+          "style": null,
+          "price_inr_est": 1915.0,
+          "preference_score": 7
+        }
+      ]
+    },
+    {
+      "user_query": "comfortable blue cotton shirt size M under 1500 rupees",
+      "query_sent_to_model": "blue cotton shirt size M under 1500 rupees",
+      "raw_generated_plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|','|blue|') AND contains(';' || lower(coalesce(fabric,'')) || ';',';cotton;') AND contains('|' || lower(coalesce(sizes,'')) || '|','|m|') AND price_inr_est < 1500",
+        "explanation": "Blue shirt, cotton fabric, size M filter, under 1500 INR budget.",
+        "sort": "recommended",
+        "unsupported": []
+      },
+      "http_status": 200,
+      "executed_sql": "SELECT parent_asin FROM shirts WHERE (((TRUE AND TRUE) AND TRUE) AND TRUE) AND (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|blue|')) AND (CONTAINS(';' || LOWER(COALESCE(fabric, '')) || ';', ';cotton;')) AND (CONTAINS('|' || LOWER(COALESCE(sizes, '')) || '|', '|m|')) AND (TRUE AND price_inr_est < 1500)",
+      "preferences": {
+        "comfort": true
+      },
+      "total_matches": 0,
+      "explanation": "Blue shirt, cotton fabric, size M filter, under 1500 INR budget. Blue must be the largest shade and cover at least 50% of saved shirt pixels; small accents and shadows do not qualify. Ranked using comfort wording and fabric/fit evidence from recorded listings; these are suitability signals, not guarantees.",
+      "ranking_note": null,
+      "unsupported": [],
+      "enforced_fields": [
+        "color",
+        "fabric",
+        "sizes",
+        "price_inr_est"
+      ],
+      "sort": "recommended",
+      "ranking": "Predominant requested shade required (at least 50% of saved shirt pixels); stronger color share ranks first. Office/comfort listing evidence first, then price provenance and Bayesian rating. Preferences do not exclude matches. Exact-price tier first; within each tier, Bayesian average rating with a 20-review prior.",
+      "top_products": []
+    },
+    {
+      "user_query": "plain pink shirt full sleeve under 1200 rupees",
+      "query_sent_to_model": "plain pink shirt full sleeve under 1200 rupees",
+      "raw_generated_plan": {
+        "sql": "SELECT parent_asin FROM shirts WHERE color = 'pink' AND pattern = 'plain' AND sleeve = 'full' AND price_inr_est < 1200",
+        "explanation": "Filters pink color, plain pattern, full sleeve, and budget under 1200 INR.",
+        "sort": "recommended",
+        "unsupported": []
+      },
+      "http_status": 200,
+      "executed_sql": "SELECT parent_asin FROM shirts WHERE ((((TRUE AND TRUE) AND TRUE) AND TRUE) AND (CONTAINS('|' || LOWER(COALESCE(color, '')) || '|', '|pink|')) AND (sleeve = 'full') AND (pattern IN ('plain')) AND (TRUE AND price_inr_est < 1200)) AND (LOWER(TRIM(COALESCE(color, ''))) = 'pink' AND pattern = 'plain')",
+      "preferences": {},
+      "total_matches": 1,
+      "explanation": "Filters pink color, plain pattern, full sleeve, and budget under 1200 INR. Only products tagged solely pink are included; mixed color tags are excluded. Pink must be the largest shade and cover at least 50% of saved shirt pixels; small accents and shadows do not qualify.",
+      "ranking_note": null,
+      "unsupported": [],
+      "enforced_fields": [
+        "color",
+        "sleeve",
+        "pattern",
+        "price_inr_est"
+      ],
+      "sort": "recommended",
+      "ranking": "Predominant requested shade required (at least 50% of saved shirt pixels); stronger color share ranks first. Exact-price tier first; within each tier, Bayesian average rating with a 20-review prior.",
+      "top_products": [
+        {
+          "parent_asin": "B005CHVJJ2",
+          "title": "Authentic Bavarian Trachten Shirt Gingham Checkered White red for Leather Trousers",
+          "color": "pink",
+          "color_main": "pink",
+          "sleeve": "full",
+          "fabric": null,
+          "fit_type": null,
+          "style": null,
+          "price_inr_est": 837.0,
+          "preference_score": 0
+        }
+      ]
+    }
+  ],
+  "direct_full_query": {
+    "query": "a comfortable white shirt for office use",
+    "plan": {
+      "sql": "SELECT parent_asin FROM shirts WHERE contains('|' || lower(coalesce(color,'')) || '|','|white|')",
+      "explanation": "White shirts are filtered by exact color token matching. Office and comfort preferences are ranked separately by the app.",
+      "sort": "recommended",
+      "unsupported": []
+    }
+  },
+  "field_examples_sent": {
+    "parent_asin": {
+      "meaning": "Recorded product ID; return it, never invent IDs.",
+      "illustrative_values": [
+        "B07F1ZLZVP"
+      ],
+      "sql_example": "SELECT parent_asin FROM shirts"
+    },
+    "title": {
+      "meaning": "Listing title; searchable text, not a verified attribute.",
+      "illustrative_values": [
+        "Cotton Dress Shirt"
+      ],
+      "sql_example": "title ILIKE '%dress shirt%'"
+    },
+    "store": {
+      "meaning": "Recorded source store.",
+      "illustrative_values": [
+        "Example Store"
+      ],
+      "sql_example": "store ILIKE 'Example Store'"
+    },
+    "sleeve": {
+      "meaning": "full means long; half means short; unknown cannot prove a sleeve.",
+      "illustrative_values": [
+        "full",
+        "half",
+        "unknown"
+      ],
+      "sql_example": "sleeve = 'full'"
+    },
+    "style": {
+      "meaning": "Recorded style text; office is ranked with broader listing evidence.",
+      "illustrative_values": [
+        "casual",
+        "formal"
+      ],
+      "sql_example": "style ILIKE '%formal%'"
+    },
+    "average_rating": {
+      "meaning": "Recorded product star rating.",
+      "illustrative_values": [
+        4.2
+      ],
+      "sql_example": "average_rating >= 4"
+    },
+    "rating_number": {
+      "meaning": "Number of recorded ratings.",
+      "illustrative_values": [
+        100
+      ],
+      "sql_example": "rating_number >= 100"
+    },
+    "price_usd": {
+      "meaning": "Historical/estimated USD amount; may be missing.",
+      "illustrative_values": [
+        20.0
+      ],
+      "sql_example": "price_usd < 25"
+    },
+    "price_source": {
+      "meaning": "Price provenance; do not restrict unless explicitly requested.",
+      "illustrative_values": [
+        "exact",
+        "estimated"
+      ],
+      "sql_example": "price_source = 'exact'"
+    },
+    "price_inr_est": {
+      "meaning": "Historical price conversion or estimate in INR, not live price.",
+      "illustrative_values": [
+        1200.0
+      ],
+      "sql_example": "price_inr_est < 1200"
+    },
+    "color": {
+      "meaning": "Pipe-separated exact shade tokens; do not merge shades.",
+      "illustrative_values": [
+        "blue|white",
+        "maroon"
+      ],
+      "sql_example": "contains('|' || lower(coalesce(color,'')) || '|','|blue|')"
+    },
+    "pattern": {
+      "meaning": "One category from the supplied vocabulary.",
+      "illustrative_values": [
+        "plain",
+        "checked_plaid",
+        "vertical_stripes"
+      ],
+      "sql_example": "pattern = 'plain'"
+    },
+    "fabric": {
+      "meaning": "Semicolon-separated material tokens; exact material matching.",
+      "illustrative_values": [
+        "cotton;polyester",
+        "linen"
+      ],
+      "sql_example": "contains(';' || lower(coalesce(fabric,'')) || ';',';cotton;')"
+    },
+    "fit_type": {
+      "meaning": "Recorded fit description.",
+      "illustrative_values": [
+        "regular fit",
+        "slim fit"
+      ],
+      "sql_example": "fit_type ILIKE '%regular fit%'"
+    },
+    "fit_review_n": {
+      "meaning": "Number of reviews contributing fit evidence.",
+      "illustrative_values": [
+        10
+      ],
+      "sql_example": "fit_review_n >= 10"
+    },
+    "pocket": {
+      "meaning": "Recorded pocket category.",
+      "illustrative_values": [
+        "no",
+        "single",
+        "double",
+        "unknown"
+      ],
+      "sql_example": "pocket = 'double'"
+    },
+    "fit_feedback": {
+      "meaning": "Recorded fit feedback; not a comfort sentiment score.",
+      "illustrative_values": [
+        "fit as expected"
+      ],
+      "sql_example": "fit_feedback ILIKE '%expected%'"
+    },
+    "review_count": {
+      "meaning": "Recorded review count, distinct from rating count.",
+      "illustrative_values": [
+        50
+      ],
+      "sql_example": "review_count >= 50"
+    },
+    "vision_status": {
+      "meaning": "Heuristic visual processing status, not verified accuracy.",
+      "illustrative_values": [
+        "ok",
+        "needs_review"
+      ],
+      "sql_example": "vision_status = 'ok'"
+    },
+    "color_main": {
+      "meaning": "Saved main visual shade; app independently enforces dominance.",
+      "illustrative_values": [
+        "white",
+        "black"
+      ],
+      "sql_example": "color_main = 'white'"
+    },
+    "color_status": {
+      "meaning": "Color processing status, not a guarantee of correct color.",
+      "illustrative_values": [
+        "ok"
+      ],
+      "sql_example": "color_status = 'ok'"
+    },
+    "sizes": {
+      "meaning": "Pipe-separated recorded size tokens; historical mentions, not live stock.",
+      "illustrative_values": [
+        "S|M|L|XL"
+      ],
+      "sql_example": "contains('|' || lower(coalesce(sizes,'')) || '|','|m|')"
+    },
+    "brand": {
+      "meaning": "Recorded brand, with source store fallback.",
+      "illustrative_values": [
+        "Example Brand"
+      ],
+      "sql_example": "brand ILIKE 'Example Brand'"
+    }
+  }
+}

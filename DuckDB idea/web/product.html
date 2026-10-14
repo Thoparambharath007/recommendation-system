@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shirt details · SmartShirts</title>
+<link rel="stylesheet" href="/assets/product_details.css">
+<style>
+:root{--ink:#17291f;--muted:#657368;--green:#245b40;--line:#dce3d8}
+*{box-sizing:border-box}body{margin:0;background:#f4f6f0;color:var(--ink);font:16px system-ui,sans-serif}
+a{color:var(--green)}button,select{font:inherit;cursor:pointer}button{border:1px solid var(--line);padding:9px 15px;border-radius:8px;background:white;color:var(--ink)}
+main{max-width:1100px;margin:28px auto;background:white;border:1px solid var(--line);border-radius:16px}
+.product-nav{padding:18px 26px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
+.product-nav span{font-weight:700}.error{color:#9a2727}
+@media(max-width:600px){main{margin:12px}.product-nav{padding:16px}}
+</style>
+</head>
+<body data-product-page="true">
+<main><nav class="product-nav"><a href="/">← Back to shirts</a><span>SmartShirts · Product details</span></nav>
+<div id="product-content" aria-live="polite"><h2>Loading shirt details…</h2></div></main>
+<script src="/assets/product_details.js"></script>
+</body></html>
